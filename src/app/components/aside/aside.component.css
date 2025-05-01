@@ -1,0 +1,38 @@
+/* Sidebar Styling */
+.sidebar {
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    min-height: 100vh;
+    padding-top: 1rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Navigation Items */
+  .sidebar .nav-item a {
+    color: #212529;
+    font-weight: 500;
+    padding: 12px 20px;
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+    margin: 5px 10px;
+  }
+  
+  /* Hover effect */
+  .sidebar .nav-item a:hover {
+    background-color: #dbeafe;
+    color: #0d6efd;
+    transform: translateX(4px);
+  }
+  
+  /* Active Link */
+  .sidebar .nav-item a.router-link-active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 0 8px #0d6efd50;
+  }
+  
+  /* Icons */
+  .sidebar .nav-item i {
+    margin-right: 8px;
+  }
+  

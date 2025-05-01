@@ -1,0 +1,71 @@
+<app-header></app-header>
+
+<app-aside></app-aside>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Detail abonnement</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+          <li class="breadcrumb-item active">Détail</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard" >
+      <div class="row">
+
+        <div class="col-xl-4">
+
+            <div class="card">
+                
+              <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                <h3>&nbsp;</h3> 
+                <h3>Nom de l'auteur</h3>
+
+                <h4>{{abon.auteur}}</h4>
+               </div>
+            </div>
+  
+          </div>
+  
+          <div class="col-xl-8">
+  
+            <div class="card">
+              <div class="card-body pt-3">
+                <!-- Bordered Tabs -->
+                <ul class="nav nav-tabs nav-tabs-bordered">
+  
+                  <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Information</button>
+                  </li>
+                </ul>
+                <div class="tab-content pt-2">
+  
+                  <div class="tab-pane fade show active profile-overview" id="profile-overview" >
+                    <h5 class="card-title">Date et Heure de l'abonnement :</h5>
+                    <p class="small fst-italic">{{abon.date}}</p>
+                    <h5 class="card-title">Montant de l'abonnement et devise</h5>
+                    <p class="small fst-italic">{{abon.montant}} {{abon.devise}}</p>
+                    <h5 class="card-title">Etat</h5>
+                    <div *ngIf="abon.state=='success'"><span class="badge bg-success">Activé</span></div>
+                  </div>
+   
+  
+                </div><!-- End Bordered Tabs -->
+  
+              </div>
+            </div>
+  
+          </div>
+    
+        <!-- Right side columns -->
+       
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>

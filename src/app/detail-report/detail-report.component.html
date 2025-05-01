@@ -1,0 +1,41 @@
+<div class="rapport-container">
+    <div class="rapport-header">
+      <h1 class="titre-rapport">Rapport de Visite Technique</h1>
+      <p class="rapport-date">Date : {{ rapport?.date }}</p>
+    </div>
+  
+    <div class="rapport-infos">
+      <p><strong>Nom du site :</strong> {{ rapport?.siteName }}</p>
+      <p><strong>Lieu :</strong> {{ rapport?.location }}</p>
+      <p><strong>Agent :</strong> {{ rapport?.agentName }}</p>
+      <p><strong>ID Rapport :</strong> {{ rapport?.id }}</p>
+    </div>
+  
+    <hr />
+  
+    <div class="rapport-section">
+      <h2>Résumé de la visite</h2>
+      <p>{{ rapport?.summary }}</p>
+    </div>
+  
+    <div class="rapport-section">
+      <h2>Problèmes identifiés</h2>
+      <ul>
+        <li *ngFor="let pb of rapport?.issues">{{ pb }}</li>
+      </ul>
+    </div>
+  
+    <div class="rapport-section">
+      <h2>Actions recommandées</h2>
+      <ul>
+        <li *ngFor="let action of rapport?.recommendations">{{ action }}</li>
+      </ul>
+    </div>
+  
+    <div class="rapport-footer">
+      <p><em>Rapport généré par le système | Eastcastle</em></p>
+      <button (click)="printPage()" class="btn-print">Imprimer</button>
+
+    </div>
+  </div>
+  

@@ -1,0 +1,23 @@
+.table-container {
+    overflow-x: auto;  
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    width: 100%; /* Le tableau occupe toute la largeur de son conteneur */
+    table-layout: fixed; /* Maintient les colonnes alignées */
+  }
+  
+  th, td {
+    word-wrap: break-word; /* Empêche le texte de déborder */
+    padding: 6px 8px; /* Espacement réduit des cellules */
+    text-align: center; /* Centrer le texte des cellules */
+    font-size: 12px; /* Réduire la taille de la police pour gagner de l'espace */
+  }
+  
+  @media (max-width: 768px) {
+    table {
+      font-size: 10px; /* Réduire davantage la taille du texte sur des écrans plus petits */
+    }
+  }
+  

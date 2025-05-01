@@ -1,0 +1,53 @@
+<app-header></app-header>
+<app-aside></app-aside>
+
+
+ <main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <span>Chargement...</span>
+      </div>
+    <!-- Titre -->
+    <div class="pagetitle mb-3" data-aos="fade-down" data-aos-duration="700">
+      <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Rapport recu</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#"><i class="bi bi-person-fill"></i> User</a></li>
+          <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> Liste</li>
+        </ol>
+      </nav>
+    </div>  
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+   <!-- Boutons d'export avec effet AOS -->
+   <div class="export-buttons" data-aos="fade-up" data-aos-duration="500">
+    <button (click)="exportPDF()" class="btn-export pdf">Exporter en PDF</button>
+    <button (click)="exportExcel()" class="btn-export excel">Exporter en Excel</button>
+  </div>
+  
+  <!-- Tableau avec animations AOS -->
+  <div *ngIf="!loading && reports.length">
+    <table id="rapportTable" class="report-table" data-aos="fade-up" data-aos-duration="800">
+      <thead>
+        <tr>
+          <th>Nom du site</th>
+          <th>Nom du FME</th>
+          <th>Type de PM</th>
+          <th>Date Planifiée</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of reports" data-aos="zoom-in" data-aos-duration="600">
+          <td>{{ report.siteName }}</td>
+          <td>{{ report.fmeFullName }}</td>
+          <td>{{ report.pmType }}</td>
+          <td>{{ report.pmPlannedDate }}</td>
+          <td>{{ report.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+ 
+</main>
+  <app-footer></app-footer>

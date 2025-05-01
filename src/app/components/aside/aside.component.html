@@ -1,0 +1,47 @@
+<!-- ======= Sidebar ======= -->
+<aside id="sidebar" class="sidebar" data-aos="fade-right" data-aos-duration="800">
+
+  <ul class="sidebar-nav" id="sidebar-nav">
+
+    <li class="nav-item" data-aos="fade-right" data-aos-delay="100">
+      <a class="nav-link" routerLink="/home">
+        <i class="bi bi-grid text-primary"></i>
+        <span>Dashboard</span>
+      </a>
+    </li><!-- End Dashboard Nav -->
+
+    <li class="nav-item" data-aos="fade-right" data-aos-delay="200">
+      <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-menu-button-wide text-warning"></i>
+        <span>Data Base Sites</span>
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+        <li data-aos="fade-right" data-aos-delay="300">
+          <a routerLink="/user/list">
+            <i class="bi bi-circle text-secondary"></i>
+            <span>List of sites</span>
+          </a>
+        </li>
+      </ul>
+
+      <a routerLink="/assigned" class="nav-link collapsed" data-aos="fade-right" data-aos-delay="350">
+        <i class="bi bi-file-earmark-person-fill text-success"></i>
+        <span>Assign PM</span>
+      </a>
+
+      <a routerLink="/list-pm" class="nav-link collapsed" data-aos="fade-right" data-aos-delay="400">
+        <i class="bi bi-calendar-date-fill text-info"></i>
+        <span>PM Planned</span>
+      </a>
+
+      <a routerLink="/rapports-recu" class="nav-link collapsed" data-aos="fade-right" data-aos-delay="450">
+        <i class="bi bi-file-earmark-arrow-down-fill text-danger"></i>
+        <span>Report Received</span>
+      </a>
+
+    </li><!-- End Components Nav -->
+
+  </ul>
+
+</aside><!-- End Sidebar -->

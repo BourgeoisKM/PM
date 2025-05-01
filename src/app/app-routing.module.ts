@@ -1,0 +1,39 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AbonnementComponent } from './abonnement/abonnement.component';
+import { DetailAbonComponent } from './detail-abon/detail-abon.component';
+import { AuthGuard } from './guards/auth.guard';
+import { HomeComponent } from './pages/home/home.component';
+import { LoginComponent } from './pages/login/login.component';
+import { ListComponent } from './pages/users/list/list.component';
+import { ProfilComponent } from './pages/users/profil/profil.component';
+import { SuggestionComponent } from './suggestion/suggestion.component';
+import { AllReportsComponent } from './all-reports/all-reports.component';
+import { AssignedComponent } from './assigned/assigned.component';
+import { PmListComponent } from './pm-list/pm-list.component';
+import { DetailReportComponent } from './detail-report/detail-report.component';
+
+const routes: Routes = [
+  { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
+  {
+    path: 'user', children: [
+      { path: 'list', component: ListComponent },
+      { path: 'detail/:id', component: ProfilComponent },
+    ], canActivate:[AuthGuard]
+  },
+  { path: '', component: LoginComponent },
+  { path: 'abonnement', component: AbonnementComponent},
+  { path: 'suggestion', component: SuggestionComponent},
+  { path: 'detail-abon/:id', component: DetailAbonComponent},
+  { path: 'rapports-recu', component: AllReportsComponent },
+  { path: 'assigned', component: AssignedComponent },
+  { path: 'list-pm', component: PmListComponent },
+  { path: 'rapport/:id', component: DetailReportComponent }
+
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

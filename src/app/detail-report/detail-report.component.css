@@ -1,0 +1,81 @@
+.rapport-container {
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 2cm;
+    margin: auto;
+    background: white;
+    color: #000;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  }
+  
+  .rapport-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .titre-rapport {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .rapport-date {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .rapport-infos p {
+    margin: 5px 0;
+  }
+  
+  .rapport-section {
+    margin-top: 20px;
+  }
+  
+  .rapport-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .rapport-section p, 
+  .rapport-section ul {
+    font-size: 15px;
+    color: #333;
+  }
+  
+  .rapport-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-style: italic;
+    color: #777;
+  }
+  
+  .btn-print {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 15px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .btn-print:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Impression */
+  @media print {
+    .btn-print {
+      display: none;
+    }
+  
+    .rapport-container {
+      box-shadow: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+  

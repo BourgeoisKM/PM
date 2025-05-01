@@ -1,0 +1,10 @@
+{
+    "/api": {
+      "target": "https://pm-backend-3t2n.onrender.com",
+      "secure": false,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api": ""
+      }
+    }
+  }

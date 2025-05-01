@@ -1,0 +1,160 @@
+<app-header></app-header>
+
+<app-aside></app-aside>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Sites EastCastlle Infrastructure</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href=home>Sites</a></li>
+          <li class="breadcrumb-item active">Liste</li>
+        </ol>
+      </nav>
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item dropdown pe-3">
+
+
+          </li>
+         
+        </ul>
+      </nav>
+    </div><!-- End Page Title -->
+    <!-- <div class="input-group" style="width: 400px;">
+      <form (ngSubmit)="onSubmit(f)" #f="ngForm" class="input-group" style="width: 400px;">
+        <div class="input-group mb-3">
+          <input 
+          type="text" 
+          name="search"
+          class="form-control rounded" 
+          placeholder="" 
+          aria-label="Search" 
+          aria-describedby="search-addon"
+          aria-label="Recipient's username"
+          aria-describedby="basic-addon2"
+          (input)="saverange()"          
+          [(ngModel)]="range"
+          />
+          <span class="input-group-text" id="basic-addon2">Recherche</span>
+        </div>
+      </form>
+      <div class="col-md-12">&nbsp;</div>
+        <div class="col-md-1" *ngIf="check == false">
+          <span class="loader" ></span>
+        </div>
+        <div class="col-md-1" *ngIf="vide == true">
+         <p>Ce Site n'existe Pas</p>
+        </div>
+    </div> -->
+    <br>
+    <br>
+
+    <section class="section dashboard">
+      <div class="row">
+        <div class="card recent-sales overflow-auto">
+       <!-- Recent Sales -->
+       <div class="col-12">  
+          <!-- <div class="card-body">
+            <h5 class="card-title">Liste <span>| actuelle</span></h5>
+            
+
+            <table class="table table-borderless datatable">
+              <thead>
+                <tr>
+                  <th scope="col">Id_Sites</th>
+                  <th scope="col">Anchor Names</th>
+                  <th scope="col">Provinces</th>
+                  <th scope="col">Tenants</th>
+                  <th scope="col">City/TOWN</th>
+                  <th scope="col">SMPS</th>
+                  <th scope="col">Battery Type</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">ZM</th>
+                  <th scope="col">FMS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of list_users | paginate: { itemsPerPage: 10, currentPage: pages }; let i = index" (click)="go(user._id)" >
+                  <th scope="row"><a href="#">{{i+1}} </a></th>
+                  <td>{{user.nom + " "+user.prenom }}</td>
+                  <td><a href="#" class="text-primary">{{user.email}}</a></td>
+                  <td>{{user.telephone}}</td>
+                  <td *ngIf="user.code=='active'"><span class="badge bg-success">Activé</span></td>
+                  <td *ngIf="user.code!='active'"><span class="badge bg-warning">Problem</span></td>
+                </tr>
+     
+              </tbody>
+              
+            </table>
+            <pagination-controls (pageChange)="pages = $event" style="text-align: center;
+            padding: 10px;"></pagination-controls>
+
+          </div> -->
+          <div class="container mt-4">
+          
+            <input type="text" [(ngModel)]="searchTerm" (input)="search()" class="form-control mb-3" placeholder="Rechercher par nom, ID ou province">
+          
+            <div *ngIf="isEmpty" class="alert alert-warning text-center">Aucun site trouvé.</div>
+          
+            <div *ngIf="hasData">
+              
+              <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Nom</th>
+                    <th>Site ID</th>
+                    <th>Province</th>
+                    <th>Région</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Type</th>
+                    <th>Énergie</th>
+                    <th>Portefeuille</th>
+                    <th>Tenants</th>
+                    <th>Vendor</th>
+                    <th>Créé le</th>
+                 
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let site of filteredSites | paginate: { itemsPerPage: 5, currentPage: page }">
+                    <td>{{ site.name }}</td>
+                    <td>{{ site.siteId }}</td>
+                    <td>{{ site.province }}</td>
+                    <td>{{ site.region }}</td>
+                    <td>{{ site.latitude }}</td>
+                    <td>{{ site.longitude }}</td>
+                    <td>{{ site.siteType }}</td>
+                    <td>{{ site.powerConfiguration }}</td>
+                    <td>{{ site.portfolio }}</td>
+                    <td>{{ site.tenantsNames }} ({{ site.tenantsCount }})</td>
+                    <td>{{ site.vendor?.name }}</td>
+                    <td>{{ site.createdAt | date: 'short' }}</td>
+                    <!-- <td>
+                      <button class="btn btn-sm btn-outline-primary" (click)="viewDetails(site.id)">Détails</button>
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+          
+              <pagination-controls [autoHide]="true" (pageChange)="page = $event"></pagination-controls>
+
+            </div>
+          </div>
+
+          
+          
+        </div>
+      </div><!-- End Recent Sales -->
+
+    
+        <!-- Right side columns -->
+       
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>

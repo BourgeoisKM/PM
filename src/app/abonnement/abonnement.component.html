@@ -1,0 +1,85 @@
+<app-header></app-header>
+
+<app-aside></app-aside>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Performances Sites / DG RH</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">User</a></li>
+          <li class="breadcrumb-item active">Liste</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+       <!-- Recent Sales -->
+       <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+           
+          <div class="card-body">
+            <h5 class="card-title">Voir la Performancea <span>| actuelle</span></h5>
+
+            <table class="table table-borderless datatable">
+              <thead class="justify-content-center">
+                <tr>
+                  <th scope="col">Id_Sites</th>
+                  <th scope="col">Anchor_Sites_Names</th>
+                  <th scope="col">Provinces</th>
+                  <th scope="col">ZM</th>
+                  <th scope="col">Index Date</th>
+                  <th scope="col">Index</th>
+                  <th scope="col">Diff Index</th>
+                  <th scope="col">Diff Date</th>
+                  <th scope="col">DGRH</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <!-- <tr *ngFor="let abon of list_abonnement | paginate: { itemsPerPage: 10, currentPage: pages }; let i = index"(click)="go(abon._id)">
+                  <th scope="row"><a href="#">{{i+1}}</a></th>
+                  <td>{{abon.auteur}}</td>
+                  <td>{{abon.date}}</td>
+                  <td>{{abon.montant}} {{abon.devise}}</td>
+                  <td></td>
+                  <td *ngIf="abon.state=='success'"><span class="badge bg-success">Activé</span></td>
+                
+                </tr> -->
+         <tr>
+                  <th scope="row"> CDKN00220</th>
+                  <td>Matonge_2-mai</td>
+                  <td>Kinshasa</td>
+                  <td>Donat Numbi</td>
+                  <td>23/03/2025</td>
+                  <td>1890,45</td>
+                  <td>100,72</td>
+                  <td>6,50</td>
+                  <td>15,49</td>
+                    
+                </tr> 
+     
+              </tbody>
+            </table>
+            <pagination-controls (pageChange)="pages = $event" style="text-align: center;
+            padding: 10px;"></pagination-controls>
+
+          </div>
+
+        </div>
+      </div><!-- End Recent Sales -->
+
+    
+        <!-- Right side columns -->
+       
+      </div>
+    </section>
+
+    
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>

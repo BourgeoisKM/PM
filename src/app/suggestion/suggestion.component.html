@@ -1,0 +1,65 @@
+<app-header></app-header>
+
+<app-aside></app-aside>
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Suggestion</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">User</a></li>
+          <li class="breadcrumb-item active">Liste</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+       <!-- Recent Sales -->
+       <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+           
+          <div class="card-body">
+            <h5 class="card-title">Liste <span>| actuelle</span></h5>
+
+            <table class="table table-borderless datatable">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Auteur</th>
+                  <th scope="col">Nom de la Suggestion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let sug of list_suggestion;let i = index">
+
+                <th scope="row"><a href="#">{{i+1}}</a></th>
+                  <td >{{sug.auteur}}</td>
+                  <td>{{sug.suggest_description}}</td>
+
+                  <!-- <th scope="row">1</th>
+                  <td>Bourgeois Kimbondo</td>
+                  <td>Grammar shake</td> -->
+                
+                </tr>
+     
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+      </div><!-- End Recent Sales -->
+
+    
+        <!-- Right side columns -->
+       
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+  <app-footer></app-footer>
