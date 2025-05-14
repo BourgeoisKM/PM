@@ -1,41 +1,107 @@
-<div class="rapport-container">
-    <div class="rapport-header">
-      <h1 class="titre-rapport">Rapport de Visite Technique</h1>
-      <p class="rapport-date">Date : {{ rapport?.date }}</p>
-    </div>
-  
-    <div class="rapport-infos">
-      <p><strong>Nom du site :</strong> {{ rapport?.siteName }}</p>
-      <p><strong>Lieu :</strong> {{ rapport?.location }}</p>
-      <p><strong>Agent :</strong> {{ rapport?.agentName }}</p>
-      <p><strong>ID Rapport :</strong> {{ rapport?.id }}</p>
-    </div>
-  
-    <hr />
-  
-    <div class="rapport-section">
-      <h2>Résumé de la visite</h2>
-      <p>{{ rapport?.summary }}</p>
-    </div>
-  
-    <div class="rapport-section">
-      <h2>Problèmes identifiés</h2>
-      <ul>
-        <li *ngFor="let pb of rapport?.issues">{{ pb }}</li>
-      </ul>
-    </div>
-  
-    <div class="rapport-section">
-      <h2>Actions recommandées</h2>
-      <ul>
-        <li *ngFor="let action of rapport?.recommendations">{{ action }}</li>
-      </ul>
-    </div>
-  
-    <div class="rapport-footer">
-      <p><em>Rapport généré par le système | Eastcastle</em></p>
-      <button (click)="printPage()" class="btn-print">Imprimer</button>
+<app-header></app-header>
+<app-aside></app-aside>
 
+<main id="main" class="main py-5" style="background-color: #f4f6f9;">
+  <div class="container mt-4">
+    <!-- Page Header -->
+    <div id="rapportContent">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Maintenance Report</h2>
+        <p class="text-muted">Review detailed information about the preventive intervention.</p>
+      </div>
+
+      <!-- Print & Export Buttons -->
+      <div class="d-flex justify-content-end mb-3" id="buttons">
+  <button class="btn btn-lg btn-primary me-2 btn-animate" (click)="printPage()">Print</button>
+   <button class="btn btn-danger btn-lg" (click)="exportToPDF()">Export PDF</button>
+</div>
+
+
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="text-center">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Loading report...</p>
+      </div>
+
+      <!-- Site Information -->
+      <div *ngIf="rapport.report?.site" class="card shadow-sm mb-4 report-block">
+        <div class="card-header bg-primary text-white fw-semibold">Site Information</div>
+        <div class="card-body block-image">
+          <div class="row g-3">
+            <div class="col-md-6"><strong>Name:</strong> {{ rapport.report.site.name }}</div>
+            <div class="col-md-6"><strong>Region / Province:</strong> {{ rapport.report.site.region }} / {{ rapport.report.site.province }}</div>
+            <div class="col-md-6"><strong>Coordinates:</strong> {{ rapport.report.site.latitude }}, {{ rapport.report.site.longitude }}</div>
+            <div class="col-md-6"><strong>Tenants:</strong> {{ rapport.report.site.tenantsNames }}</div>
+            <div class="col-md-6"><strong>Portfolio:</strong> {{ rapport.report.site.portfolio }}</div>
+            <div class="col-md-6"><strong>Power Configuration:</strong> {{ rapport.report.site.powerConfiguration }}</div>
+            <div class="col-md-6"><strong>Site Type:</strong> {{ rapport.report.site.siteType }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report Data -->
+      <div *ngIf="rapport.report" class="card shadow-sm mb-4 report-block">
+        <div class="card-header bg-secondary text-white fw-semibold">Report Data</div>
+        <div class="card-body block-image">
+          <div class="row g-3">
+            <div class="col-md-4"><strong>FME:</strong> {{ rapport.report.fmeName }}</div>
+            <div class="col-md-4"><strong>Scheduled PM:</strong> {{ rapport.report.pmPlannedDate | date:'mediumDate' }}</div>
+            <div class="col-md-4"><strong>Performed PM:</strong> {{ rapport.report.pmActualDate | date:'mediumDate' }}</div>
+            <div class="col-md-4"><strong>PM Type:</strong> {{ rapport.report.pmType }}</div>
+            <div class="col-md-4">
+              <strong>Status:</strong>
+              <span class="badge bg-success px-3 py-2 text-uppercase">{{ rapport.report.status }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sections -->
+      <ng-container *ngIf="rapport.report?.sections?.length">
+        <div *ngFor="let section of rapport.report.sections" class="card shadow-sm mb-4 report-block">
+          <div class="card-header bg-dark text-white fw-semibold">{{ section.title }}</div>
+          <div class="card-body block-image">
+            <p>
+              <strong>Reported Issue:</strong>
+              <span *ngIf="section.hasIssue" class="badge bg-danger ms-2">Yes</span>
+              <span *ngIf="!section.hasIssue" class="badge bg-success ms-2">No</span>
+            </p>
+            <hr />
+
+            <!-- Items -->
+            <div *ngFor="let item of section.items" class="mb-4">
+              <h6 class="block-title text-decoration-underline">{{ item.label }}</h6>
+
+              <div *ngFor="let value of rapport.values">
+                <ng-container *ngIf="value.reportItemId === item.id">
+                  <p>{{ value.value }}</p>
+                  <p *ngIf="value.comment"><em>Comment:</em> {{ value.comment }}</p>
+                </ng-container>
+              </div>
+
+              <!-- Images -->
+              <div class="row mt-2">
+                <div class="col-md-4 mb-3" *ngFor="let photo of rapport.photos" [hidden]="photo.itemId !== item.id">
+                  <div class="report-block">
+                    <h6 class="block-title">{{ item.label }}</h6>
+                    <div class="block-image">
+                      <img [src]="photo.url" class="img-fluid rounded border" [alt]="'Photo ' + item.label" />
+                      <small *ngIf="photo.comment" class="text-muted d-block mt-1">{{ photo.comment }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- No sections -->
+      <div *ngIf="!rapport.report?.sections?.length" class="alert alert-warning">
+        No sections available for this report.
+      </div>
     </div>
   </div>
-  
+</main>
+
+<app-footer></app-footer>

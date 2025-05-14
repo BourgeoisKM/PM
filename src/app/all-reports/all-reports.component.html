@@ -1,53 +1,86 @@
 <app-header></app-header>
 <app-aside></app-aside>
 
+<main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <span>Loading...</span>
+  </div>
 
- <main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
-    <div *ngIf="loading" class="loading-container">
-        <div class="spinner"></div>
-        <span>Chargement...</span>
-      </div>
-    <!-- Titre -->
-    <div class="pagetitle mb-3" data-aos="fade-down" data-aos-duration="700">
-      <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Rapport recu</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#"><i class="bi bi-person-fill"></i> User</a></li>
-          <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> Liste</li>
-        </ol>
-      </nav>
-    </div>  
-  <div *ngIf="error" class="error-message">{{ error }}</div>
-   <!-- Boutons d'export avec effet AOS -->
-   <div class="export-buttons" data-aos="fade-up" data-aos-duration="500">
-    <button (click)="exportPDF()" class="btn-export pdf">Exporter en PDF</button>
-    <button (click)="exportExcel()" class="btn-export excel">Exporter en Excel</button>
+  <!-- Page Title -->
+  <div class="pagetitle mb-4" data-aos="fade-down" data-aos-duration="700">
+    <h1 class="fw-bold text-dark">
+      <i class="bi bi-tools me-2"></i> Received Reports
+    </h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="bi bi-person-fill"></i> User</a>
+        </li>
+        <li class="breadcrumb-item active">
+          <i class="bi bi-list-task"></i> List
+        </li>
+      </ol>
+    </nav>
   </div>
-  
-  <!-- Tableau avec animations AOS -->
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <!-- Export Buttons -->
+  <div class="export-buttons mb-3 d-flex gap-2" data-aos="fade-up" data-aos-duration="500">
+    <button (click)="exportPDF()" class="btn btn-outline-danger">
+      <i class="bi bi-file-earmark-pdf"></i> Export to PDF
+    </button>
+    <button (click)="exportExcel()" class="btn btn-outline-success">
+      <i class="bi bi-file-earmark-excel"></i> Export to Excel
+    </button>
+  </div>
+
+  <!-- Reports Table -->
   <div *ngIf="!loading && reports.length">
-    <table id="rapportTable" class="report-table" data-aos="fade-up" data-aos-duration="800">
-      <thead>
-        <tr>
-          <th>Nom du site</th>
-          <th>Nom du FME</th>
-          <th>Type de PM</th>
-          <th>Date Planifiée</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let report of reports" data-aos="zoom-in" data-aos-duration="600">
-          <td>{{ report.siteName }}</td>
-          <td>{{ report.fmeFullName }}</td>
-          <td>{{ report.pmType }}</td>
-          <td>{{ report.pmPlannedDate }}</td>
-          <td>{{ report.status }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table id="rapportTable" class="table table-striped table-hover align-middle shadow-sm" data-aos="fade-up" data-aos-duration="800">
+        <thead class="table-dark">
+          <tr>
+            <th>Site Name</th>
+            <th>FME Full Name</th>
+            <th>PM Type</th>
+            <th>Scheduled Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of reports" data-aos="zoom-in" data-aos-duration="600">
+            <td>{{ report.siteName }}</td>
+            <td>{{ report.fmeFullName }}</td>
+            <td>{{ report.pmType }}</td>
+            <td>{{ report.pmPlannedDate | date: 'mediumDate' }}</td>
+            <td>
+              <span class="badge bg-dark" [ngClass]="{
+                'bg-success': report.status === 'Closed',
+                'bg-warning text-dark': report.status === 'Open',
+                'bg-danger': report.status === 'Degraded'
+              }">{{ report.status }}</span>
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="voirRapport(report)">
+                <i class="bi bi-eye"></i> View Report
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  
- 
+
+  <!-- No data found -->
+  <div *ngIf="!loading && !reports.length" class="text-center text-muted my-5" data-aos="fade-in">
+    <i class="bi bi-folder-x" style="font-size: 2rem;"></i>
+    <p class="mt-2">No reports available.</p>
+  </div>
 </main>
-  <app-footer></app-footer>
+
+<app-footer></app-footer>

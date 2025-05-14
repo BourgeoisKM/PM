@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; 
 import { DataService } from 'src/app/services/data.service';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -13,9 +14,9 @@ export class AllReportsComponent implements OnInit {
   pages: number = 1;
   reports: any[] = [];
   loading: boolean = true;
-  error: string | null = null;  // Pour gérer les erreurs
+  error: string | null = null;
 
-  constructor(private data: DataService) { }
+  constructor(private data: DataService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadReports();
@@ -27,22 +28,21 @@ export class AllReportsComponent implements OnInit {
         console.log('Réponse de l\'API:', res);
 
         if (res && Array.isArray(res) && res.length > 0) {
-          // Si les données sont valides et contiennent des rapports
           this.reports = res.map(report => ({
-            ...report,  // Garder tous les autres champs
-            siteName: report.site.name,  // Ajout d'un champ lisible pour le nom du site
-            fmeFullName: report.fme.fullName,  // Nom complet du FME
-            status: report.status.toUpperCase()  // Assurez-vous que le statut est bien formaté
+            ...report,
+            siteName: report.site?.name || 'N/A',
+            fmeFullName: report.fme?.fullName || 'Inconnu',
+            status: report.status ? report.status.toUpperCase() : 'NON DEFINI'
           }));
         } else {
-          this.error = 'Aucun rapport valide trouvé';
+          this.error = 'Aucun rapport valide trouvé.';
         }
-        
+
         this.loading = false;
       },
       (err) => {
         console.error('Erreur lors du chargement des rapports:', err);
-        this.error = 'Erreur de chargement des rapports';
+        this.error = 'Erreur de chargement des rapports.';
         this.loading = false;
       }
     );
@@ -65,9 +65,21 @@ export class AllReportsComponent implements OnInit {
 
   exportExcel(): void {
     const element = document.getElementById('rapportTable');
-    const worksheet = XLSX.utils.table_to_sheet(element);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapports');
-    XLSX.writeFile(workbook, 'rapports.xlsx');
+    if (element) {
+      const worksheet = XLSX.utils.table_to_sheet(element);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapports');
+      XLSX.writeFile(workbook, 'rapports.xlsx');
+    } else {
+      console.warn("Élément HTML non trouvé pour l'export Excel.");
+    }
+  }
+
+  voirRapport(report: any): void {
+    if (report?.id) {
+      this.router.navigate(['/rapport', report.id]);
+    } else {
+      console.warn("L'ID du rapport est introuvable.");
+    }
   }
 }

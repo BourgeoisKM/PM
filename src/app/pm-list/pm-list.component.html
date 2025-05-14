@@ -2,45 +2,46 @@
 <app-aside></app-aside>
 
 <main id="main" class="main">
-  <!-- Titre de la page -->
+  <!-- Page Title -->
   <div class="pagetitle" data-aos="fade-down">
-    <h1>Assign a PM</h1>
+    <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Assigned PMs</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">User</a></li>
-        <li class="breadcrumb-item active">Liste</li>
+        <li class="breadcrumb-item"><a href="#"><i class="bi bi-person-fill"></i> User</a></li>
+        <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> List</li>
       </ol>
     </nav>
   </div>
 
-  <!-- Contenu principal -->
+  <!-- Main Content -->
   <div class="container py-4">
+    <!-- Section Header -->
     <div class="text-center mb-4" data-aos="zoom-in">
-      <h2 class="text-primary fw-bold">List of PMs</h2>
-      <p class="text-muted">PM Planned</p>
+      <h2 class="text-primary fw-bold"><i class="bi bi-calendar-check-fill me-2"></i>Scheduled Preventive Maintenances</h2>
+      <p class="text-muted">Overview of assigned PM tasks</p>
     </div>
 
-    <!-- Alerte si aucune PM -->
+    <!-- Alert when no PMs assigned -->
     <div *ngIf="paginatedSchedules.length === 0" class="alert alert-warning text-center" data-aos="fade-in">
-      Aucune PM assignée.
+      No PM assigned yet.
     </div>
 
-    <!-- Cartes des PMs -->
+    <!-- PM Cards -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" *ngFor="let pm of paginatedSchedules" data-aos="fade-up" data-aos-delay="100">
         <div class="card shadow-sm border border-2 border-info">
           <div class="card-body">
-            <h5 class="card-title text-success fw-bold">{{ pm.siteName || 'Site inconnu' }}</h5>
+            <h5 class="card-title text-success fw-bold">{{ pm.siteName || 'Unknown site' }}</h5>
             <p class="card-text">
-              <strong>Date prévue :</strong> {{ pm.plannedDate | date: 'longDate' }}<br>
-              <strong>Type :</strong> <span class="badge bg-info text-dark">{{ pm.pmType }}</span><br>
-              <strong>Ticket :</strong> {{ pm.ticket }}<br>
-              <strong>Statut :</strong> {{ pm.isUsed }}<br>
-              <strong>FME :</strong> {{ pm.fmeName }}
+              <strong>Planned Date:</strong> {{ pm.plannedDate | date: 'longDate' }}<br>
+              <strong>Type:</strong> <span class="badge bg-info text-dark">{{ pm.pmType }}</span><br>
+              <strong>Ticket:</strong> {{ pm.ticket || 'N/A' }}<br>
+              <strong>Status:</strong> {{ pm.isUsed ? 'Used' : 'Pending' }}<br>
+              <strong>FME:</strong> {{ pm.fmeName || 'Not assigned' }}
             </p>
           </div>
-          <div class="card-footer text-muted text-end">
-            <span class="badge bg-danger text-white">Assigné</span>
+          <div class="card-footer text-end">
+            <span class="badge bg-danger text-white">Assigned</span>
           </div>
         </div>
       </div>
@@ -50,7 +51,7 @@
     <nav *ngIf="totalPages > 1" class="mt-4 d-flex justify-content-center" data-aos="fade-up" data-aos-delay="300">
       <ul class="pagination">
         <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+          <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
         </li>
         <li
           class="page-item"
@@ -59,7 +60,7 @@
           <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
         </li>
         <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+          <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
         </li>
       </ul>
     </nav>

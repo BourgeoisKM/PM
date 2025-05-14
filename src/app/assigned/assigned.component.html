@@ -2,67 +2,59 @@
 <app-aside></app-aside>
 
 <main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
-  <!-- Titre -->
+  <!-- Page Title -->
   <div class="pagetitle mb-3" data-aos="fade-down" data-aos-duration="700">
-    <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Assigner une PM</h1>
+    <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Assign a PM</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#"><i class="bi bi-person-fill"></i> User</a></li>
-        <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> Liste</li>
+        <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> List</li>
       </ol>
     </nav>
   </div>
 
-  <!-- Formulaire -->
-  <div class="container" style="max-width: 800px;" data-aos="zoom-in-up" data-aos-duration="800">
-    <div class="card p-3 border-0 shadow-sm">
-      <h5 class="fw-semibold text-primary mb-4" data-aos="fade-up" data-aos-delay="100">
-        <i class="bi bi-calendar-plus-fill me-2"></i>Planification d'une Maintenance Préventive
-      </h5>
+  <!-- Form Card -->
+  <div class="container" style="max-width: 850px;">
+    <div class="card shadow-lg border-0 p-4" data-aos="zoom-in-up" data-aos-duration="800">
+      <div class="card-header bg-primary text-white fw-semibold mb-3">
+        <i class="bi bi-calendar-plus-fill me-2"></i>Preventive Maintenance Planning
+      </div>
 
-      <form [formGroup]="pmForm" (ngSubmit)="assignPM()">
-        <div class="row mb-3">
+      <form [formGroup]="pmForm" (ngSubmit)="assignPM()" class="card-body">
+        <div class="row g-4 mb-3">
           <div class="col-md-6">
-            <label class="form-label fw-semibold text-muted">
+            <label class="form-label text-muted fw-semibold">
               <i class="bi bi-geo-alt-fill me-1 text-primary"></i>Site
             </label>
             <select class="form-select" formControlName="siteId" required>
-                <option value="">-- Choisir un site --</option>
-                <option *ngFor="let site of sites" [value]="site.id">
-                  {{ site.siteId }} - {{ site.name }}
-                </option>
-              </select>
-              
+              <option value="">-- Select a site --</option>
+              <option *ngFor="let site of sites" [value]="site.id">{{ site.siteId }} - {{ site.name }}</option>
+            </select>
           </div>
 
           <div class="col-md-6">
-            <label class="form-label fw-semibold text-muted">
-              <i class="bi bi-calendar-event-fill me-1 text-primary"></i>Date de la PM
+            <label class="form-label text-muted fw-semibold">
+              <i class="bi bi-calendar-event-fill me-1 text-primary"></i>PM Date
             </label>
             <input type="date" class="form-control" formControlName="plannedDate" />
           </div>
-        </div>
 
-        <div class="row mb-3">
           <div class="col-md-6">
-            <label class="form-label fw-semibold text-muted">
+            <label class="form-label text-muted fw-semibold">
               <i class="bi bi-person-workspace me-1 text-primary"></i>FME
             </label>
             <select class="form-select" formControlName="fmeId">
-                <option value="">-- Choisir un FME --</option>
-                <option *ngFor="let user of fme" [value]="user.id">{{ user.fullName }}</option>
-              </select>
-
-
-        
+              <option value="">-- Select an FME --</option>
+              <option *ngFor="let user of fme" [value]="user.id">{{ user.fullName }}</option>
+            </select>
           </div>
 
           <div class="col-md-6">
-            <label class="form-label fw-semibold text-muted">
-              <i class="bi bi-gear-wide-connected me-1 text-primary"></i>Type de PM
+            <label class="form-label text-muted fw-semibold">
+              <i class="bi bi-gear-wide-connected me-1 text-primary"></i>PM Type
             </label>
             <select class="form-select" formControlName="pmType">
-              <option value="">-- Choisir un type --</option>
+              <option value="">-- Select a type --</option>
               <option value="250H">250H</option>
               <option value="500H">500H</option>
               <option value="1000H">1000H</option>
@@ -71,8 +63,8 @@
         </div>
 
         <div class="text-end">
-          <button type="submit" class="btn btn-primary" [disabled]="pmForm.invalid">
-            <i class="bi bi-send-fill me-2"></i>Assigner la PM
+          <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="pmForm.invalid">
+            <i class="bi bi-send-fill me-2"></i>Assign PM
           </button>
         </div>
       </form>

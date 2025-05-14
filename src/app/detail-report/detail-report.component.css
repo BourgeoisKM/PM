@@ -1,81 +1,58 @@
-.rapport-container {
-    width: 21cm;
-    min-height: 29.7cm;
-    padding: 2cm;
-    margin: auto;
-    background: white;
-    color: #000;
-    font-family: 'Segoe UI', sans-serif;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+.report-page {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 15px;
+  transition: all 0.4s ease-in-out;
+}
+
+/* Zoom image */
+.img-hover {
+  transition: transform 0.3s ease;
+}
+.img-hover:hover {
+  transform: scale(1.1);
+}
+
+/* Animations CSS (bootstrap-compatible, sans AOS) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
-  .rapport-header {
-    text-align: center;
-    margin-bottom: 30px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .titre-rapport {
-    font-size: 24px;
-    margin-bottom: 5px;
+}
+.animate__animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+.animate__fadeInUp {
+  animation-name: fadeInUp;
+}
+.animate__delay-1s {
+  animation-delay: 0.5s;
+}
+.animate__delay-2s {
+  animation-delay: 1s;
+}
+
+@media print {
+  body, html {
+    background: none !important;
   }
-  
-  .rapport-date {
-    font-size: 14px;
-    color: #555;
+
+  .report-page {
+    box-shadow: none !important;
+    width: 100%;
+    padding: 0;
   }
-  
-  .rapport-infos p {
-    margin: 5px 0;
+
+  .btn,
+  app-header,
+  app-aside,
+  app-footer {
+    display: none !important;
   }
-  
-  .rapport-section {
-    margin-top: 20px;
-  }
-  
-  .rapport-section h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .rapport-section p, 
-  .rapport-section ul {
-    font-size: 15px;
-    color: #333;
-  }
-  
-  .rapport-footer {
-    margin-top: 40px;
-    text-align: center;
-    font-style: italic;
-    color: #777;
-  }
-  
-  .btn-print {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 15px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .btn-print:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Impression */
-  @media print {
-    .btn-print {
-      display: none;
-    }
-  
-    .rapport-container {
-      box-shadow: none;
-      margin: 0;
-      padding: 0;
-    }
-  }
-  
+}
