@@ -1,6 +1,4 @@
-<!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar" data-aos="fade-right" data-aos-duration="800">
-
   <ul class="sidebar-nav" id="sidebar-nav">
 
     <li class="nav-item" data-aos="fade-right" data-aos-delay="100">
@@ -8,7 +6,15 @@
         <i class="bi bi-grid text-primary"></i>
         <span>Dashboard</span>
       </a>
-    </li><!-- End Dashboard Nav -->
+    </li>
+
+    <!-- Visible uniquement pour OPS ADMIN -->
+    <li class="nav-item" data-aos="fade-right" data-aos-delay="150" *ngIf="role === 'ops_admin'">
+      <a class="nav-link" routerLink="/register">
+        <i class="bi bi-person-plus-fill text-success"></i>
+        <span>Créer des nouvel utilisateur</span>
+      </a>
+    </li>
 
     <li class="nav-item" data-aos="fade-right" data-aos-delay="200">
       <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
@@ -39,9 +45,6 @@
         <i class="bi bi-file-earmark-arrow-down-fill text-danger"></i>
         <span>Report Received</span>
       </a>
-
-    </li><!-- End Components Nav -->
-
+    </li>
   </ul>
-
-</aside><!-- End Sidebar -->
+</aside>

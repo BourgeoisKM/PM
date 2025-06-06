@@ -1,134 +1,103 @@
-<app-header></app-header>
-<app-aside></app-aside>
+  <app-header></app-header>
+  <app-aside></app-aside>
 
-<main id="main" class="main">
-  <div class="pagetitle">
-    <h1 class="fw-bold">Tableau de Bord</h1>
-  </div>
-
-  <section class="section dashboard">
-    <div class="row">
-
-      <!-- KPI Row 1 -->
-      <div class="col-lg-12">
-        <div class="row">
-
-          <!-- Sites -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="100">
-            <div class="card info-card sales-card shadow border-start border-primary border-4">
-
-              <div class="card-body">
-                <h5 class="card-title">Our Sites <span class="text-muted fs-6">| Today</span></h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle bg-primary text-white d-flex align-items-center justify-content-center">
-                    <i class="bi bi-bounding-box"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 class="fw-bold">932</h6>
-                    <span class="text-muted small">Sites</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Planning Assigned -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="card info-card revenue-card shadow border-start border-warning border-4">
-
-              <div class="card-body">
-                <h5 class="card-title">Planning Assigned</h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle bg-warning text-white d-flex align-items-center justify-content-center">
-                    <i class="bi bi-calendar-date-fill"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 class="fw-bold">{{ assignedPMCount }}</h6>
-                    <span class="text-muted small">PM en attente</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PM Accepted -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="300">
-            <div class="card info-card customers-card shadow border-start border-success border-4">
-
-              <div class="card-body">
-                <h5 class="card-title">Repport received</h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle bg-success text-white d-flex align-items-center justify-content-center">
-                    <i class="bi bi-file-earmark-text-fill"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 class="fw-bold">{{ reportCount+4 }}</h6>
-                    <span class="text-muted small">Validés</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- KPI Row 2 -->
-      <div class="col-lg-12">
-        <div class="row">
-
-          <!-- Delayed -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="400">
-            <div class="card info-card sales-card shadow border-start border-secondary border-4">
-              <div class="card-body">
-                <h5 class="card-title">PM en Retard</h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center">
-                    <i class="bi bi-calendar-x-fill"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 class="fw-bold">14</h6>
-                    <span class="text-muted small">Rapports</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Rejected -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="500">
-            <div class="card info-card sales-card shadow border-start border-danger border-4">
-              <div class="card-body">
-                <h5 class="card-title">PM Rejetés</h5>
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle bg-danger text-white d-flex align-items-center justify-content-center">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 class="fw-bold">1</h6>
-                    <span class="text-muted small">Critiques</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Placeholder for chart -->
-          <div class="col-xxl-4 col-md-4" data-aos="fade-up" data-aos-delay="600">
-            <div class="card info-card shadow h-100">
-              <div class="card-body text-center">
-                <h5 class="card-title">Graphique en cours</h5>
-                <i class="bi bi-graph-up-arrow fs-1 text-info"></i>
-                <p class="mt-3 text-muted">Les données seront bientôt disponibles.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
+  <main id="main" class="main bg-light p-4">
+    <div class="pagetitle mb-4">
+      <h1 class="fw-bold text-dark">Tableau de Bord</h1>
     </div>
-  </section>
-</main>
 
-<app-footer></app-footer>
+    <section class="section dashboard">
+      <div class="row g-3">
+
+        <!-- KPI Cards -->
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-circle bg-primary text-white me-3">
+                <i class="bi bi-bounding-box fs-3"></i>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-semibold">Nos Sites</h6>
+                <h3 class="mb-0 fw-bold text-primary count-up">935</h3>
+                <small class="text-muted">Aujourd’hui</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-circle bg-warning text-white me-3">
+                <i class="bi bi-calendar-date-fill fs-3"></i>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-semibold">Planning Assigné</h6>
+                <h3 class="mb-0 fw-bold text-warning count-up">{{ pmPlanifiees }}</h3>
+                <small class="text-muted">PM en attente</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-circle bg-success text-white me-3">
+                <i class="bi bi-file-earmark-text-fill fs-3"></i>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-semibold">Rapports Reçus (PM exécuté)</h6>
+                <h3 class="mb-0 fw-bold text-success count-up">{{ nombreRapports }}</h3>
+                <small class="text-muted">Validés</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-circle bg-secondary text-white me-3">
+                <i class="bi bi-calendar-x-fill fs-3"></i>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-semibold">PM en Retard</h6>
+                <h3 class="mb-0 fw-bold text-secondary count-up">{{ pmEnRetard }}</h3>
+                <small class="text-muted">Rapports</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+            <div class="d-flex align-items-center">
+              <div class="icon-circle bg-danger text-white me-3">
+                <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+              </div>
+              <div>
+                <h6 class="mb-1 fw-semibold">PM Rejetés</h6>
+                <h3 class="mb-0 fw-bold text-danger count-up">1</h3>
+                <small class="text-muted">Critiques</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="700">
+          <div class="card shadow-sm border-0 rounded-3 p-3">
+            <h5 class="fw-semibold mb-3">Répartition des PM (Circulaire)</h5>
+            <canvas baseChart
+                    [data]="pieChartData"
+                    [labels]="pieChartLabels"
+                    [type]="'pie'">
+            </canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <app-footer></app-footer>

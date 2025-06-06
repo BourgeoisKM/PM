@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   trigger,
   transition,
@@ -25,27 +22,45 @@ import { DataService } from '../services/data.service';
 })
 export class PmListComponent implements OnInit {
   pmSchedules: any[] = [];
-  currentPage: number = 1;
-  itemsPerPage: number = 6;
+  currentPage = 1;
+  itemsPerPage = 6;
+
+  userRole: string = '';
+  vendorId: string = '';
 
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
+    this.loadUserContext();
     this.loadPMSchedules();
   }
 
-  loadPMSchedules(): void {
-    this.dataService.getAssignedPMs().subscribe(
-      (res) => {
-        this.pmSchedules = res;
-      },
-      (error) => {
-        console.error('Erreur lors du chargement des PM assignées', error);
-      }
-    );
+  private loadUserContext(): void {
+    this.userRole = (localStorage.getItem('userRole') || '').toLowerCase();
+    this.vendorId = localStorage.getItem('vendorId') || '';
   }
 
-  get paginatedSchedules() {
+  private loadPMSchedules(): void {
+    this.dataService.getAssignedPMs().subscribe({
+      next: (res: any[]) => {
+        if (this.userRole === 'vendor_admin') {
+          // On filtre via le FME => fme.vendorId
+          this.pmSchedules = res.filter(pm => pm.fme?.vendorId === this.vendorId);
+        } else if (this.userRole === 'ops_admin') {
+          this.pmSchedules = res;
+        } else {
+          this.pmSchedules = [];
+        }
+        this.currentPage = 1;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des PM assignées :', err);
+        alert('Impossible de charger les données de PM.');
+      }
+    });
+  }
+
+  get paginatedSchedules(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.pmSchedules.slice(start, start + this.itemsPerPage);
   }
@@ -54,7 +69,9 @@ export class PmListComponent implements OnInit {
     return Math.ceil(this.pmSchedules.length / this.itemsPerPage);
   }
 
-  changePage(page: number) {
-    this.currentPage = page;
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 }

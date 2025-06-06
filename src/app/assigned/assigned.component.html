@@ -4,11 +4,13 @@
 <main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
   <!-- Page Title -->
   <div class="pagetitle mb-3" data-aos="fade-down" data-aos-duration="700">
-    <h1 class="fw-bold text-dark"><i class="bi bi-tools me-2"></i>Assign a PM</h1>
-    <nav>
+    <h1 class="fw-bold text-dark">
+      <i class="bi bi-tools me-2"></i>Assign a Preventive Maintenance
+    </h1>
+    <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#"><i class="bi bi-person-fill"></i> User</a></li>
-        <li class="breadcrumb-item active"><i class="bi bi-list-task"></i> List</li>
+        <li class="breadcrumb-item active" aria-current="page"><i class="bi bi-list-task"></i> Assign PM</li>
       </ol>
     </nav>
   </div>
@@ -20,46 +22,53 @@
         <i class="bi bi-calendar-plus-fill me-2"></i>Preventive Maintenance Planning
       </div>
 
-      <form [formGroup]="pmForm" (ngSubmit)="assignPM()" class="card-body">
+      <form [formGroup]="pmForm" (ngSubmit)="assignPM()" class="card-body" novalidate>
         <div class="row g-4 mb-3">
-          <div class="col-md-6">
-            <label class="form-label text-muted fw-semibold">
-              <i class="bi bi-geo-alt-fill me-1 text-primary"></i>Site
-            </label>
-            <select class="form-select" formControlName="siteId" required>
-              <option value="">-- Select a site --</option>
-              <option *ngFor="let site of sites" [value]="site.id">{{ site.siteId }} - {{ site.name }}</option>
-            </select>
-          </div>
 
+          <!-- FME -->
           <div class="col-md-6">
-            <label class="form-label text-muted fw-semibold">
-              <i class="bi bi-calendar-event-fill me-1 text-primary"></i>PM Date
-            </label>
-            <input type="date" class="form-control" formControlName="plannedDate" />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label text-muted fw-semibold">
+            <label for="fmeId" class="form-label text-muted fw-semibold">
               <i class="bi bi-person-workspace me-1 text-primary"></i>FME
             </label>
-            <select class="form-select" formControlName="fmeId">
-              <option value="">-- Select an FME --</option>
+            <select id="fmeId" class="form-select" formControlName="fmeId" required aria-label="Select an FME">
+              <option value="" disabled>-- Select an FME --</option>
               <option *ngFor="let user of fme" [value]="user.id">{{ user.fullName }}</option>
             </select>
           </div>
 
+          <!-- Site -->
           <div class="col-md-6">
-            <label class="form-label text-muted fw-semibold">
+            <label for="siteId" class="form-label text-muted fw-semibold">
+              <i class="bi bi-geo-alt-fill me-1 text-primary"></i>Site
+            </label>
+            <select id="siteId" class="form-select" formControlName="siteId" required aria-label="Select a site" [disabled]="sites.length === 0">
+              <option *ngIf="sites.length === 0" value="" disabled>-- No sites available --</option>
+              <option *ngIf="sites.length > 0" value="" disabled>-- Select a site --</option>
+              <option *ngFor="let site of sites" [value]="site.id">{{ site.name }}</option>
+            </select>
+          </div>
+
+          <!-- Planned Date -->
+          <div class="col-md-6">
+            <label for="plannedDate" class="form-label text-muted fw-semibold">
+              <i class="bi bi-calendar-event-fill me-1 text-primary"></i>Planned Date
+            </label>
+            <input id="plannedDate" type="date" class="form-control" formControlName="plannedDate" required aria-required="true" />
+          </div>
+
+          <!-- PM Type -->
+          <div class="col-md-6">
+            <label for="pmType" class="form-label text-muted fw-semibold">
               <i class="bi bi-gear-wide-connected me-1 text-primary"></i>PM Type
             </label>
-            <select class="form-select" formControlName="pmType">
-              <option value="">-- Select a type --</option>
+            <select id="pmType" class="form-select" formControlName="pmType" required aria-label="Select PM Type">
+              <option value="" disabled>-- Select a type --</option>
               <option value="250H">250H</option>
               <option value="500H">500H</option>
               <option value="1000H">1000H</option>
             </select>
           </div>
+
         </div>
 
         <div class="text-end">

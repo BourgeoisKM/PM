@@ -1,52 +1,60 @@
 <main>
   <div class="container-fluid bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-    
     <section class="register py-4 w-100" style="max-width: 420px;">
-      
-      <div class="card shadow-sm border-0 rounded-4 p-4" style="background: #fff;">
-        
+      <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+
         <!-- Logo -->
         <div class="text-center mb-4">
           <img src="assets/img/EI.png" alt="Logo" style="width: 60px;">
-          <!-- <h4 class="fw-bold mt-2 text-dark">PM DASHBOARD</h4> -->
         </div>
 
         <!-- Titre -->
         <div class="text-center mb-3">
           <h5 class="card-title fw-semibold">Connexion</h5>
-          <p class="small text-muted">Entrez votre numéro & mot de passe</p>
+          <p class="small text-muted">Entrez votre identifiant et mot de passe</p>
         </div>
 
-        <!-- Form -->
-        <form class="needs-validation" novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
+        <!-- Formulaire -->
+        <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
 
           <div class="mb-3">
-            <label for="yourUsername" class="form-label">Username</label>
+            <label for="email" class="form-label">Identifiant</label>
             <div class="input-group">
-              <span class="input-group-text bg-white"><i class="bi bi-telephone-fill text-secondary"></i></span>
-              <input type="text" name="phone" ngModel id="yourUsername" class="form-control" required placeholder="Ex: John Doe">
+              <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                [(ngModel)]="email"
+                class="form-control"
+                required
+                placeholder="Ex: john.doe@mail.com ou 0123456789">
             </div>
-            <div class="invalid-feedback">Veuillez entrer votre numéro.</div>
           </div>
 
           <div class="mb-4">
-            <label for="yourPassword" class="form-label">Password</label>
+            <label for="password" class="form-label">Mot de passe</label>
             <div class="input-group">
-              <span class="input-group-text bg-white"><i class="bi bi-lock-fill text-secondary"></i></span>
-              <input type="password" name="pass" ngModel id="yourPassword" class="form-control" required placeholder="••••••••">
+              <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                [(ngModel)]="password"
+                class="form-control"
+                required
+                placeholder="••••••••">
             </div>
-            <div class="invalid-feedback">Veuillez entrer votre mot de passe.</div>
           </div>
 
           <div class="d-grid">
-            <button type="submit" class="btn btn-dark btn-lg rounded-pill shadow-sm">
+            <button type="submit" class="btn btn-dark btn-lg rounded-pill">
               <i class="bi bi-box-arrow-in-right me-2"></i>Connexion
             </button>
           </div>
 
         </form>
       </div>
-      
     </section>
   </div>
 </main>

@@ -1,25 +1,60 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit{
+export class HeaderComponent implements OnInit {
+
+  nom: string = '';
+  path: string = '';
+  roleLabel: string = 'Utilisateur';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<any>('https://pm-backend-3t2n.onrender.com/auth/me', { headers }).subscribe({
+      next: (data) => {
+        this.nom = data?.fullName || 'Utilisateur';
+        this.path = data?.photo || 'assets/img/default-profile.png';
+        this.roleLabel = this.getRoleLabel(data?.role);
+      },
+      error: (err) => {
+        console.warn('Profil non récupéré, mais session maintenue. Erreur :', err);
+        // On garde des valeurs par défaut, pas de déconnexion automatique
+        this.nom = 'Utilisateur';
+        this.path = 'assets/img/default-profile.png';
+        this.roleLabel = 'Utilisateur';
+      }
+    });
+  } else {
+    // Aucun token => nom par défaut
+    this.nom = 'Utilisateur';
+    this.path = 'assets/img/default-profile.png';
+    this.roleLabel = 'Utilisateur';
+  }
+}
 
 
-   nom :any = '';
-   path :any = '';
+  getRoleLabel(role: string): string {
+    switch (role) {
+      case 'ops_admin': return 'OPS Admin';
+      case 'vendor_admin': return 'Vendor Admin';
+      default: return 'Utilisateur';
+    }
+  }
 
-   ngOnInit():void{
-      // this.nom = localStorage.getItem('NOM_USER');
-      // this.path = localStorage.getItem('PROFIL_USER');
-      // console.log(this.nom);
-      
-   }
-
-   logout(){
-      localStorage.clear();
-      window.location.href = '/';
-   }
+  logout() {
+    localStorage.clear();
+    window.location.href = '/';
+  }
 }

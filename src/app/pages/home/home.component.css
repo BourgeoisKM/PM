@@ -1,0 +1,92 @@
+body, html, #main {
+  background-color: #f8f9fa;
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: box-shadow 0.4s ease;
+}
+
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+/* Pour les animations AOS */
+[data-aos] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-timing-function: ease;
+}
+
+[data-aos].aos-animate {
+  opacity: 1;
+}
+
+/* Compteur animé */
+.count-up {
+  animation: countup 1.5s ease forwards;
+}
+
+@keyframes countup {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body, html, #main {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.card {
+  background-color: var(--card-bg);
+  box-shadow: 0 4px 8px var(--shadow-color);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.icon-circle.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+.icon-circle.bg-warning {
+  background-color: var(--warning-color) !important;
+}
+.icon-circle.bg-success {
+  background-color: var(--success-color) !important;
+}
+.icon-circle.bg-danger {
+  background-color: var(--danger-color) !important;
+}
+.icon-circle.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+/* Garde le reste du style intact */

@@ -13,6 +13,16 @@
     </nav>
   </div>
 
+  <!-- Rôle utilisateur -->
+  <div class="container mb-4" data-aos="fade-in">
+    <div *ngIf="userRole === 'ops_admin'" class="alert alert-info">
+      <i class="bi bi-shield-lock-fill me-2"></i><strong>OPS Admin :</strong> You are viewing all vendors' PM assignments.
+    </div>
+    <div *ngIf="userRole === 'vendor_admin'" class="alert alert-primary">
+      <i class="bi bi-person-badge-fill me-2"></i><strong>Vendor Admin :</strong> You are viewing your team’s PM assignments only.
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="container py-4">
     <!-- Section Header -->

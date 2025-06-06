@@ -22,6 +22,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PmListComponent } from './pm-list/pm-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DetailReportComponent } from './detail-report/detail-report.component';
+import { NgChartsModule } from 'ng2-charts';
+import { RegisterComponent } from './pages/register/register.component';
+import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
+
 
  
 @NgModule({
@@ -41,6 +45,9 @@ import { DetailReportComponent } from './detail-report/detail-report.component';
     AssignedComponent,
     PmListComponent,
     DetailReportComponent,
+    RegisterComponent,
+    MonProfilComponent,
+
    ],
   imports: [
     BrowserModule,
@@ -49,7 +56,8 @@ import { DetailReportComponent } from './detail-report/detail-report.component';
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

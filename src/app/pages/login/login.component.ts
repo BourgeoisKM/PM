@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/services/data.service';
-import Swal from 'sweetalert2'
-
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -11,14 +10,10 @@ import Swal from 'sweetalert2'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  phone: string = "";
-  pass: string = "";
+  email: string = '';
+  password: string = '';
 
-  // Identifiants par défaut (TEMPORAIRES)
-  private defaultUser = {
-    phone: 'Bourgeois',
-    pass: '1234'
-  };
+  allowedRoles: string[] = ['vendor_admin', 'pm_analyst', 'ops_admin', 'noc_supervisor'];
 
   constructor(private dataService: DataService, private router: Router) {}
 
@@ -26,72 +21,69 @@ export class LoginComponent {
     if (!form.valid) {
       Swal.fire({
         icon: 'error',
-        title: 'Oops...',
-        text: 'Veuillez remplir tous les champs correctement !',
+        title: 'Champs requis',
+        text: 'Veuillez remplir tous les champs.'
       });
       return;
     }
 
     Swal.fire({
-      title: 'Chargement...',
-      width: 300,
-      didOpen: () => {
-        Swal.showLoading();
-      }
+      title: 'Connexion en cours...',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading()
     });
 
-    // Vérification des identifiants par défaut
-    if (form.value.phone === this.defaultUser.phone && form.value.pass === this.defaultUser.pass) {
-      Swal.close();
-      Swal.fire({
-        icon: 'success',
-        title: 'Connexion réussie !',
-        text: 'Bienvenue Admin !',
-        timer: 2000
-      }).then(() => {
-        this.router.navigate(['home']); // Redirection
-      });
-      return;
-    }
+    const payload = {
+      email: this.email,
+      password: this.password
+    };
 
-    // Sinon, on tente la connexion via l'API
-    this.dataService.login(form.value.phone, form.value.pass).subscribe(
-      (response: any) => {
-        console.log('Login successful', response);
+    this.dataService.login(payload).subscribe({
+      next: (res: any) => {
         Swal.close();
-        Swal.fire({
-          icon: 'success',
-          title: 'Connexion réussie !',
-          text: 'Bienvenue !',
-          timer: 2000
-        }).then(() => {
-          this.router.navigate(['home']);
-        });
+
+        if (res.user && res.token) {
+          const userRole = res.user.role;
+
+          if (!this.allowedRoles.includes(userRole)) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Accès refusé',
+              text: 'Rôle non autorisé.'
+            });
+            return;
+          }
+
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('currentUser', JSON.stringify(res.user));
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Connexion réussie !',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            this.router.navigate(['/home']);
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Réponse invalide du serveur.'
+          });
+        }
       },
-      (error) => {
-        console.error('Login failed', error);
+      error: (err) => {
+        Swal.close();
+        console.error('Erreur login:', err);
+
         Swal.fire({
           icon: 'error',
-          title: 'Échec de connexion',
-          text: 'Vérifiez vos identifiants et réessayez.',
+          title: 'Erreur',
+          text: err?.error?.message || 'Email ou mot de passe incorrect.'
         });
       }
-    );
+    });
   }
 }
-
-     // if (res.user != null) {
-        //this.dataService.saveData(res.user);
-       // Swal.close();
-        //Swal.fire({ position: 'center', icon: 'success', title: "Connexion reussi", showConfirmButton: false, timer: 1500 });
-        // Swal.
-     //   this.router.navigate(['home']);
-     // }
-
-   // });
-
-
-
- // }
-
-//}

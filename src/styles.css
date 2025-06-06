@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-color: #f8f9fa;
+  --card-bg: #fff;
+  --text-color: #212529;
+  --text-muted: #6c757d;
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --primary-color: #0d6efd;
+  --warning-color: #ffc107;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --secondary-color: #6c757d;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #e9ecef;
+  --text-muted: #adb5bd;
+  --shadow-color: rgba(255, 255, 255, 0.1);
+  --primary-color: #4dabf7;
+  --warning-color: #ffd43b;
+  --success-color: #95d5b2;
+  --danger-color: #f56565;
+  --secondary-color: #868e96;
+}

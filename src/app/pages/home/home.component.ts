@@ -1,8 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DataService } from 'src/app/services/data.service';
-import { AbonnementService } from 'src/app/services/abonnement.service';
 import { take } from 'rxjs/operators';
+
+interface PM {
+  siteId: string;
+  pmType: string;
+  plannedDate: string;
+  vendorId: string;
+}
+
+interface Report {
+  siteId: string;
+  pmType: string;
+  vendorId: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -11,56 +22,105 @@ import { take } from 'rxjs/operators';
 })
 export class HomeComponent implements OnInit {
 
-  nbre_user: Number = 0;
-  nbre_domaine: Number = 0;
-  nbre_abon: number =0;
-  nbre_sug:number =0;
-  nombreRapports: number = 0;
-  assignedPMCount: number = 0;
-  constructor(private data: DataService, private router: Router, private abon:AbonnementService) {
+  role: string = '';
+  vendorId: string = '';
+  nombreRapports = 0;
+  pmPlanifiees = 0;
+  pmExecutees = 0;
+  pmEnRetard = 0;
 
-  }
+  pieChartData: any;
+  pieChartLabels = ['Planifiées', 'Exécutées', 'En retard'];
+
+  constructor(private dataService: DataService) {}
+
   ngOnInit(): void {
-    this.loadReports();
-    this.loadAssignedPMs();
-    this.getReportCount();
+  const currentUser = this.dataService.getCurrentUser();
+  if (!currentUser) {
+    console.error('Utilisateur non authentifié.');
+    return;
   }
-  loadReports(): void {
-    this.data.getreport().pipe(take(1)).subscribe((res: any) => {
-      this.nombreRapports = res.length;
-      console.log('Nombre de rapports:', this.nombreRapports);
-    }, error => {
-      console.error('Erreur lors de la récupération des rapports', error);
-    });
-  }
-  loadAssignedPMs() {
-    this.data.getAssignedPMs().subscribe(
-      (data) => {
-        this.assignedPMCount = data.length;
-      },
-      (error) => {
-        console.error('Erreur lors de la récupération des PM assignées', error);
-      }
-    );
-  }
-  reportCount: number = 0;
 
-  getReportCount() {
-    const reportId = 'cc0f64ea-ee25-4289-87bf-01256e1d4cd3';
-  
-    this.data.getFullReport(reportId).subscribe({
-      next: (res: any) => {
-        this.reportCount = res ? 1 : 0;
-        console.log('Rapport reçu :', res);
-        console.log('Nombre de rapports :', this.reportCount);
+  this.role = currentUser.role;
+  this.vendorId = currentUser.vendorId || '';
+  this.loadStats();
+  this.setupThemeToggle();
+}
+
+
+  loadStats(): void {
+    this.dataService.getAssignedPMs().pipe(take(1)).subscribe({
+      next: (assignedPMs: PM[]) => {
+        console.log('PM assignées récupérées :', assignedPMs); 
+        const pmsFiltres = this.role === 'vendor_admin'
+          ? assignedPMs.filter(pm => pm.vendorId === this.vendorId)
+          : assignedPMs;
+
+        this.pmPlanifiees = pmsFiltres.length;
+
+        this.dataService.getReports().pipe(take(1)).subscribe({
+          next: (reports: Report[]) => {
+            const rapportsFiltres = this.role === 'vendor_admin'
+              ? reports.filter(r => r.vendorId === this.vendorId)
+              : reports;
+
+            this.nombreRapports = rapportsFiltres.length;
+
+            const now = new Date();
+            let enRetard = 0;
+            let executees = 0;
+
+            for (const pm of pmsFiltres) {
+              const rapportExiste = rapportsFiltres.some(
+                r => r.siteId === pm.siteId && r.pmType === pm.pmType
+              );
+
+              const datePlanifiee = new Date(pm.plannedDate);
+              if (isNaN(datePlanifiee.getTime())) continue; // Ignore dates invalides
+
+              if (rapportExiste) {
+                executees++;
+              } else if (datePlanifiee < now) {
+                enRetard++;
+              }
+            }
+
+            this.pmExecutees = executees;
+            this.pmEnRetard = enRetard;
+
+            this.updatePieChart();
+          },
+          error: (err) => {
+            console.error('Erreur lors de la récupération des rapports :', err);
+          }
+        });
       },
       error: (err) => {
-        console.error('Erreur lors de la récupération du rapport :', err);
-        this.reportCount = 0;
+        console.error('Erreur lors de la récupération des PM assignées :', err);
       }
     });
   }
-  
 
+  updatePieChart(): void {
+    this.pieChartData = {
+      labels: this.pieChartLabels,
+      datasets: [{
+        data: [this.pmPlanifiees, this.pmExecutees, this.pmEnRetard],
+        backgroundColor: ['#36A2EB', '#4BC0C0', '#FF6384']
+      }]
+    };
+  }
 
+  setupThemeToggle(): void {
+    const toggleBtn = document.getElementById('theme-toggle');
+    toggleBtn?.addEventListener('click', () => {
+      const darkMode = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    });
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+  }
 }
