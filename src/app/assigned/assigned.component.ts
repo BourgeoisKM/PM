@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from '../services/data.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-assigned',
@@ -12,6 +13,8 @@ export class AssignedComponent implements OnInit {
   fme: any[] = [];
   allSites: any[] = [];
   sites: any[] = [];
+  assignedItems: any[] = [];
+  filteredItems: any[] = [];
 
   currentUserRole: string = '';
   currentUserVendorId: string = '';
@@ -23,17 +26,23 @@ export class AssignedComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-
-    const user = this.dataService.getCurrentUser();
-    this.currentUserRole = (user.role || '').toLowerCase();
-    this.currentUserVendorId = user.vendorId || '';
-
-    this.loadFMEs();
     this.loadAllSites();
 
-    // Quand on change le FME, on filtre les sites
-    this.pmForm.get('fmeId')?.valueChanges.subscribe(fmeId => {
-      this.filterSitesByFME(fmeId);
+    forkJoin({
+      user: this.dataService.getCurrentUser(),
+      assigned: this.dataService.getAssignedPMs()
+    }).subscribe({
+      next: ({ user, assigned }) => {
+        this.currentUserVendorId = (user.vendorId || '').trim().toLowerCase();
+        this.currentUserRole = (user.role || '').trim().toLowerCase();
+        console.log(`Utilisateur : role=${this.currentUserRole}, vendorId=${this.currentUserVendorId}`);
+
+        this.assignedItems = assigned || [];
+        this.filteredItems = this.filterByVendor(this.assignedItems, this.currentUserVendorId);
+
+        this.loadFMEs();
+      },
+      error: err => console.error('Erreur forkJoin :', err)
     });
   }
 
@@ -50,63 +59,82 @@ export class AssignedComponent implements OnInit {
     this.dataService.getUsers().subscribe({
       next: (users: any[]) => {
         let fmUsers = users.filter(u => (u.role || '').toLowerCase() === 'fme');
+
         if (this.currentUserRole === 'vendor_admin') {
-          fmUsers = fmUsers.filter(fme => fme.vendorId === this.currentUserVendorId);
+          fmUsers = fmUsers.filter(fme =>
+            (fme.vendorId || '').trim().toLowerCase() === this.currentUserVendorId
+          );
         }
+
         this.fme = fmUsers;
+        console.log('FMEs filtrés:', this.fme);
       },
-      error: err => {
-        console.error('Erreur lors du chargement des FME :', err);
-      }
+      error: err => console.error('Erreur chargement FMEs :', err)
     });
   }
 
   private loadAllSites(): void {
     this.dataService.getSites().subscribe({
       next: (sites: any[]) => {
-        this.allSites = sites;
+        if (this.currentUserRole === 'vendor_admin') {
+          this.allSites = sites.filter(site =>
+            (site.vendorId || '').trim().toLowerCase() === this.currentUserVendorId
+          );
+        } else {
+          this.allSites = sites;
+        }
+        console.log('Sites chargés:', this.allSites);
       },
-      error: err => {
-        console.error('Erreur lors du chargement des sites :', err);
-      }
+      error: err => console.error('Erreur chargement sites :', err)
     });
   }
 
-  private filterSitesByFME(fmeId: string): void {
-    if (!fmeId) {
-      this.sites = [];
-      this.pmForm.get('siteId')?.setValue('');
-      return;
-    }
-
-    const selectedFME = this.fme.find(fme => String(fme.id) === String(fmeId));
-    if (!selectedFME) {
-      this.sites = [];
-      this.pmForm.get('siteId')?.setValue('');
-      return;
-    }
-
-    const vendorId = selectedFME.vendorId;
-
-    // Filtrer les sites par vendorId du FME sélectionné
-    this.sites = this.allSites.filter(site => site.vendorId === vendorId);
-
-    // Réinitialiser la sélection du site
-    this.pmForm.get('siteId')?.setValue('');
+  private filterByVendor(items: any[], vendorId: string): any[] {
+    return items.filter(item =>
+      (item.vendorId || '').trim().toLowerCase() === vendorId
+    );
   }
 
-  // <-- AJOUT de la méthode assignPM() ici -->
+  filterSitesByFME(fmeId: string): void {
+    const selectedFME = this.fme.find(f => String(f.id) === String(fmeId));
+
+    if (!selectedFME || !selectedFME.vendorId) {
+      this.sites = [];
+      this.pmForm.get('siteId')?.setValue('');
+      return;
+    }
+
+    const fmeVendorId = selectedFME.vendorId.trim().toLowerCase();
+
+    this.sites = this.allSites.filter(site =>
+      (site.vendorId || '').trim().toLowerCase() === fmeVendorId
+    );
+
+    this.pmForm.get('siteId')?.setValue(this.sites.length === 1 ? this.sites[0].id : '');
+  }
+
+  onFMEChange(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    this.filterSitesByFME(selectedId);
+  }
+
   assignPM(): void {
     if (this.pmForm.invalid) {
-      console.warn('Formulaire invalide');
       this.pmForm.markAllAsTouched();
+      console.warn('Formulaire invalide');
       return;
     }
 
     const formData = this.pmForm.value;
-    console.log('Assign PM avec les données:', formData);
+    console.log('Soumission PM:', formData);
 
-    // Ici tu peux appeler une méthode de ton service pour sauvegarder
-    // Exemple : this.dataService.assignPreventiveMaintenance(formData).subscribe(...)
+    this.dataService.assignPreventiveMaintenance(formData).subscribe({
+      next: res => {
+        console.log('Assignation réussie :', res);
+        this.pmForm.reset();
+        this.sites = [];
+      },
+      error: err => console.error('Erreur assignation :', err)
+    });
   }
 }

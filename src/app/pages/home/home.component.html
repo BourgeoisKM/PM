@@ -1,103 +1,109 @@
-  <app-header></app-header>
-  <app-aside></app-aside>
+<app-header></app-header>
+<app-aside></app-aside>
 
-  <main id="main" class="main bg-light p-4">
-    <div class="pagetitle mb-4">
-      <h1 class="fw-bold text-dark">Tableau de Bord</h1>
-    </div>
+<main id="main" class="main bg-light p-4">
+  <div class="pagetitle mb-4">
+    <h1 class="fw-bold text-dark">Tableau de Bord</h1>
+  </div>
 
-    <section class="section dashboard">
-      <div class="row g-3">
+  <section class="section dashboard">
+    <div class="row g-3">
 
-        <!-- KPI Cards -->
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-primary text-white me-3">
-                <i class="bi bi-bounding-box fs-3"></i>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-semibold">Nos Sites</h6>
-                <h3 class="mb-0 fw-bold text-primary count-up">935</h3>
-                <small class="text-muted">Aujourd’hui</small>
-              </div>
+      <!-- Nos Sites (fixe ou à connecter plus tard) -->
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-primary text-white me-3">
+              <i class="bi bi-bounding-box fs-3"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 fw-semibold">Nos Sites</h6>
+              <h3 class="mb-0 fw-bold text-primary count-up">935</h3>
+              <small class="text-muted">Aujourd’hui</small>
             </div>
           </div>
         </div>
-
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-warning text-white me-3">
-                <i class="bi bi-calendar-date-fill fs-3"></i>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-semibold">Planning Assigné</h6>
-                <h3 class="mb-0 fw-bold text-warning count-up">{{ pmPlanifiees }}</h3>
-                <small class="text-muted">PM en attente</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-success text-white me-3">
-                <i class="bi bi-file-earmark-text-fill fs-3"></i>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-semibold">Rapports Reçus (PM exécuté)</h6>
-                <h3 class="mb-0 fw-bold text-success count-up">{{ nombreRapports }}</h3>
-                <small class="text-muted">Validés</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-secondary text-white me-3">
-                <i class="bi bi-calendar-x-fill fs-3"></i>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-semibold">PM en Retard</h6>
-                <h3 class="mb-0 fw-bold text-secondary count-up">{{ pmEnRetard }}</h3>
-                <small class="text-muted">Rapports</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-          <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-            <div class="d-flex align-items-center">
-              <div class="icon-circle bg-danger text-white me-3">
-                <i class="bi bi-exclamation-triangle-fill fs-3"></i>
-              </div>
-              <div>
-                <h6 class="mb-1 fw-semibold">PM Rejetés</h6>
-                <h3 class="mb-0 fw-bold text-danger count-up">1</h3>
-                <small class="text-muted">Critiques</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="700">
-          <div class="card shadow-sm border-0 rounded-3 p-3">
-            <h5 class="fw-semibold mb-3">Répartition des PM (Circulaire)</h5>
-            <canvas baseChart
-                    [data]="pieChartData"
-                    [labels]="pieChartLabels"
-                    [type]="'pie'">
-            </canvas>
-          </div>
-        </div>
-
       </div>
-    </section>
-  </main>
 
-  <app-footer></app-footer>
+      <!-- Planning Assigné -->
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-warning text-white me-3">
+              <i class="bi bi-calendar-date-fill fs-3"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 fw-semibold">Planning Assigné</h6>
+              <h3 class="mb-0 fw-bold text-warning count-up">{{ pmPlanifiees }}</h3>
+              <small class="text-muted">PM en attente</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rapports Reçus (PM exécuté) -->
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-success text-white me-3">
+              <i class="bi bi-file-earmark-text-fill fs-3"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 fw-semibold">Rapports Reçus (PM exécuté)</h6>
+              <h3 class="mb-0 fw-bold text-success count-up">{{ pmExecutees }}</h3>
+              <small class="text-muted">Validés</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PM en Retard -->
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-secondary text-white me-3">
+              <i class="bi bi-calendar-x-fill fs-3"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 fw-semibold">PM en Retard</h6>
+              <h3 class="mb-0 fw-bold text-secondary count-up">{{ pmEnRetard }}</h3>
+              <small class="text-muted">Rapports</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PM Rejetés (fixe pour l’instant, adapte selon ta logique) -->
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-danger text-white me-3">
+              <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 fw-semibold">PM Rejetés</h6>
+              <h3 class="mb-0 fw-bold text-danger count-up">1</h3>
+              <small class="text-muted">Critiques</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphique Répartition -->
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="700">
+        <div class="card shadow-sm border-0 rounded-3 p-3">
+          <h5 class="fw-semibold mb-3">Répartition des PM (Circulaire)</h5>
+          <!-- <canvas baseChart
+                  [data]="pieChartData?.datasets[0]?.data"
+                  [labels]="pieChartLabels"
+                  [type]="'pie'"
+                  [backgroundColor]="pieChartData?.datasets[0]?.backgroundColor">
+          </canvas> -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

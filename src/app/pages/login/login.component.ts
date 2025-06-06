@@ -44,7 +44,7 @@ export class LoginComponent {
         Swal.close();
 
         if (res.user && res.token) {
-          const userRole = res.user.role;
+          const userRole = res.user.role?.toLowerCase();
 
           if (!this.allowedRoles.includes(userRole)) {
             Swal.fire({
@@ -55,9 +55,9 @@ export class LoginComponent {
             return;
           }
 
+          //  Stockage sécurisé
           localStorage.setItem('token', res.token);
-          localStorage.setItem('currentUser', JSON.stringify(res.user));
-
+          localStorage.setItem('currentUser', JSON.stringify(res.user)); 
           Swal.fire({
             icon: 'success',
             title: 'Connexion réussie !',
@@ -66,6 +66,7 @@ export class LoginComponent {
           }).then(() => {
             this.router.navigate(['/home']);
           });
+
         } else {
           Swal.fire({
             icon: 'error',

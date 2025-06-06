@@ -12,7 +12,8 @@ export class AsideComponent implements OnInit {
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    const currentUser = this.dataService.getCurrentUser();
-    this.role = currentUser?.role || '';
+    this.dataService.getCurrentUser().subscribe((currentUser: any) => {
+      this.role = currentUser?.role || '';
+    });
   }
 }

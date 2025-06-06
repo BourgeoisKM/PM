@@ -36,21 +36,48 @@ export class PmListComponent implements OnInit {
   }
 
   private loadUserContext(): void {
-    this.userRole = (localStorage.getItem('userRole') || '').toLowerCase();
-    this.vendorId = localStorage.getItem('vendorId') || '';
+    const rawRole = localStorage.getItem('userRole') || '';
+    this.userRole = rawRole.trim().toLowerCase();
+
+    const rawVendorId = localStorage.getItem('vendorId') || '';
+    this.vendorId = rawVendorId.trim().toLowerCase();
+
+    console.log('UserRole:', this.userRole);
+    console.log('VendorId:', this.vendorId);
   }
 
   private loadPMSchedules(): void {
     this.dataService.getAssignedPMs().subscribe({
       next: (res: any[]) => {
-        if (this.userRole === 'vendor_admin') {
-          // On filtre via le FME => fme.vendorId
-          this.pmSchedules = res.filter(pm => pm.fme?.vendorId === this.vendorId);
-        } else if (this.userRole === 'ops_admin') {
+        console.log('PMs reçus:', res);
+
+        if (this.userRole === 'ops_admin') {
+          // OPS Admin voit tout
           this.pmSchedules = res;
-        } else {
+        } 
+        else if (this.userRole === 'vendor_admin') {
+          if (!this.vendorId) {
+            console.warn('vendorId manquant pour vendor_admin');
+            this.pmSchedules = [];
+          } else {
+            // Filtrer les PMs dont le vendorId correspond à celui de l’utilisateur
+            this.pmSchedules = res.filter(pm => {
+              const pmVendorIdRaw = pm.fme?.vendorId || '';
+              const pmVendorId = pmVendorIdRaw.trim().toLowerCase();
+
+              const match = pmVendorId === this.vendorId;
+
+              console.log(`PM site "${pm.siteName || 'unknown'}" vendorId: "${pmVendorIdRaw}" => match:`, match);
+              return match;
+            });
+          }
+        } 
+        else {
+          console.warn(`Rôle utilisateur non reconnu : "${this.userRole}" - aucune PM affichée`);
           this.pmSchedules = [];
         }
+
+        console.log('PM schedules après filtre:', this.pmSchedules);
         this.currentPage = 1;
       },
       error: (err) => {

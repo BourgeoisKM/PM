@@ -2,7 +2,6 @@
 <app-aside></app-aside>
 
 <main id="main" class="main" data-aos="fade-in" data-aos-duration="600">
-  <!-- Page Title -->
   <div class="pagetitle mb-3" data-aos="fade-down" data-aos-duration="700">
     <h1 class="fw-bold text-dark">
       <i class="bi bi-tools me-2"></i>Assign a Preventive Maintenance
@@ -15,7 +14,6 @@
     </nav>
   </div>
 
-  <!-- Form Card -->
   <div class="container" style="max-width: 850px;">
     <div class="card shadow-lg border-0 p-4" data-aos="zoom-in-up" data-aos-duration="800">
       <div class="card-header bg-primary text-white fw-semibold mb-3">
@@ -24,15 +22,16 @@
 
       <form [formGroup]="pmForm" (ngSubmit)="assignPM()" class="card-body" novalidate>
         <div class="row g-4 mb-3">
-
           <!-- FME -->
           <div class="col-md-6">
             <label for="fmeId" class="form-label text-muted fw-semibold">
               <i class="bi bi-person-workspace me-1 text-primary"></i>FME
             </label>
-            <select id="fmeId" class="form-select" formControlName="fmeId" required aria-label="Select an FME">
-              <option value="" disabled>-- Select an FME --</option>
-              <option *ngFor="let user of fme" [value]="user.id">{{ user.fullName }}</option>
+            <select id="fmeId" class="form-select" formControlName="fmeId" (change)="onFMEChange($event)">
+              <option value="" disabled selected>-- Select an FME --</option>
+              <option *ngFor="let user of fme" [value]="user.id">
+                {{ user.fullName }}
+              </option>
             </select>
           </div>
 
@@ -41,19 +40,20 @@
             <label for="siteId" class="form-label text-muted fw-semibold">
               <i class="bi bi-geo-alt-fill me-1 text-primary"></i>Site
             </label>
-            <select id="siteId" class="form-select" formControlName="siteId" required aria-label="Select a site" [disabled]="sites.length === 0">
-              <option *ngIf="sites.length === 0" value="" disabled>-- No sites available --</option>
-              <option *ngIf="sites.length > 0" value="" disabled>-- Select a site --</option>
+            <select id="siteId" class="form-select" formControlName="siteId" [disabled]="sites.length === 0">
+              <option value="" disabled selected>
+                {{ sites.length === 0 ? '-- No sites available --' : '-- Select a site --' }}
+              </option>
               <option *ngFor="let site of sites" [value]="site.id">{{ site.name }}</option>
             </select>
           </div>
 
-          <!-- Planned Date -->
+          <!-- Date -->
           <div class="col-md-6">
             <label for="plannedDate" class="form-label text-muted fw-semibold">
               <i class="bi bi-calendar-event-fill me-1 text-primary"></i>Planned Date
             </label>
-            <input id="plannedDate" type="date" class="form-control" formControlName="plannedDate" required aria-required="true" />
+            <input id="plannedDate" type="date" class="form-control" formControlName="plannedDate" />
           </div>
 
           <!-- PM Type -->
@@ -61,16 +61,16 @@
             <label for="pmType" class="form-label text-muted fw-semibold">
               <i class="bi bi-gear-wide-connected me-1 text-primary"></i>PM Type
             </label>
-            <select id="pmType" class="form-select" formControlName="pmType" required aria-label="Select PM Type">
-              <option value="" disabled>-- Select a type --</option>
+            <select id="pmType" class="form-select" formControlName="pmType">
+              <option value="" disabled selected>-- Select a type --</option>
               <option value="250H">250H</option>
               <option value="500H">500H</option>
               <option value="1000H">1000H</option>
             </select>
           </div>
-
         </div>
 
+        <!-- Submit Button -->
         <div class="text-end">
           <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="pmForm.invalid">
             <i class="bi bi-send-fill me-2"></i>Assign PM
