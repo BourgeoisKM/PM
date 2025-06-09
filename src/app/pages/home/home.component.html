@@ -3,13 +3,13 @@
 
 <main id="main" class="main bg-light p-4">
   <div class="pagetitle mb-4">
-    <h1 class="fw-bold text-dark">Tableau de Bord</h1>
+    <h1 class="fw-bold text-dark">Dashboard</h1>
   </div>
 
   <section class="section dashboard">
     <div class="row g-3">
 
-      <!-- Nos Sites (fixe ou à connecter plus tard) -->
+      <!-- Our Sites (fixed or to be connected later) -->
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
         <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
           <div class="d-flex align-items-center">
@@ -17,15 +17,15 @@
               <i class="bi bi-bounding-box fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Nos Sites</h6>
+              <h6 class="mb-1 fw-semibold">Our Sites</h6>
               <h3 class="mb-0 fw-bold text-primary count-up">935</h3>
-              <small class="text-muted">Aujourd’hui</small>
+              <small class="text-muted">Today</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Planning Assigné -->
+      <!-- Assigned Planning -->
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
         <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
           <div class="d-flex align-items-center">
@@ -33,15 +33,15 @@
               <i class="bi bi-calendar-date-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Planning Assigné</h6>
+              <h6 class="mb-1 fw-semibold">Assigned Planning</h6>
               <h3 class="mb-0 fw-bold text-warning count-up">{{ pmPlanifiees }}</h3>
-              <small class="text-muted">PM en attente</small>
+              <small class="text-muted">Pending PM</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Rapports Reçus (PM exécuté) -->
+      <!-- Reports Received (Executed PM) -->
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
         <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
           <div class="d-flex align-items-center">
@@ -49,15 +49,15 @@
               <i class="bi bi-file-earmark-text-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Rapports Reçus (PM exécuté)</h6>
+              <h6 class="mb-1 fw-semibold">Reports Received (Executed PM)</h6>
               <h3 class="mb-0 fw-bold text-success count-up">{{ pmExecutees }}</h3>
-              <small class="text-muted">Validés</small>
+              <small class="text-muted">Validated</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PM en Retard -->
+      <!-- Delayed PM -->
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
         <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
           <div class="d-flex align-items-center">
@@ -65,15 +65,15 @@
               <i class="bi bi-calendar-x-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">PM en Retard</h6>
+              <h6 class="mb-1 fw-semibold">Delayed PM</h6>
               <h3 class="mb-0 fw-bold text-secondary count-up">{{ pmEnRetard }}</h3>
-              <small class="text-muted">Rapports</small>
+              <small class="text-muted">Reports</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PM Rejetés (fixe pour l’instant, adapte selon ta logique) -->
+      <!-- Rejected PM (fixed for now, adapt according to your logic) -->
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
         <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
           <div class="d-flex align-items-center">
@@ -81,18 +81,18 @@
               <i class="bi bi-exclamation-triangle-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">PM Rejetés</h6>
+              <h6 class="mb-1 fw-semibold">Rejected PM</h6>
               <h3 class="mb-0 fw-bold text-danger count-up">1</h3>
-              <small class="text-muted">Critiques</small>
+              <small class="text-muted">Critical</small>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Graphique Répartition -->
+      <!-- PM Distribution Chart -->
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="700">
         <div class="card shadow-sm border-0 rounded-3 p-3">
-          <h5 class="fw-semibold mb-3">Répartition des PM (Circulaire)</h5>
+          <h5 class="fw-semibold mb-3">PM Distribution (Circular)</h5>
           <!-- <canvas baseChart
                   [data]="pieChartData?.datasets[0]?.data"
                   [labels]="pieChartLabels"

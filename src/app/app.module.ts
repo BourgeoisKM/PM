@@ -25,6 +25,8 @@ import { DetailReportComponent } from './detail-report/detail-report.component';
 import { NgChartsModule } from 'ng2-charts';
 import { RegisterComponent } from './pages/register/register.component';
 import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
+import { ListFmeComponent } from './pages/list-fme/list-fme.component';
+import { ToastrModule } from 'ngx-toastr';
 
 
  
@@ -47,6 +49,7 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
     DetailReportComponent,
     RegisterComponent,
     MonProfilComponent,
+    ListFmeComponent,
 
    ],
   imports: [
@@ -57,7 +60,8 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     NgxPaginationModule,
-    NgChartsModule
+    NgChartsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

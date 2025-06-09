@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Liste des Utilisateurs FME</h2>
+
+  <div *ngIf="fmeUsers.length === 0">
+    <p>Aucun utilisateur FME trouvé.</p>
+  </div>
+
+  <table *ngIf="fmeUsers.length > 0" class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>Nom Complet</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Vendor ID</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of fmeUsers">
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.vendorId }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">
+            <i class="bi bi-trash"></i> Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -14,6 +14,7 @@ import { PmListComponent } from './pm-list/pm-list.component';
 import { DetailReportComponent } from './detail-report/detail-report.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
+import { ListFmeComponent } from './pages/list-fme/list-fme.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
@@ -32,7 +33,8 @@ const routes: Routes = [
   { path: 'list-pm', component: PmListComponent },
   { path: 'rapport/:id', component: DetailReportComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'mon-profil', component: MonProfilComponent }
+  { path: 'mon-profil', component: MonProfilComponent },
+  { path: 'fme-list', component: ListFmeComponent },
 
 ];
 

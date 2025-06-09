@@ -1,116 +1,117 @@
 <main>
   <div class="container-fluid bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-    
+
     <section class="register py-4 w-100" style="max-width: 460px;">
-      
+
       <div class="card shadow border-0 rounded-4 p-4 bg-white">
-        
+
         <!-- Logo -->
         <div class="text-center mb-4">
           <img src="assets/img/EI.png" alt="Logo" style="width: 70px;">
         </div>
 
-        <!-- Titre -->
+        <!-- Title -->
         <div class="text-center mb-3">
-          <h4 class="fw-bold text-dark">Créer un compte</h4>
-          <p class="text-muted small">Veuillez remplir tous les champs pour ajouter un Utilisateur</p>
+          <h4 class="fw-bold text-dark">Create an Account</h4>
+          <p class="text-muted small">Please fill in all fields to add a User</p>
         </div>
 
-        <!-- Formulaire -->
+        <!-- Form -->
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
 
-  <!-- Nom complet -->
-  <div class="mb-3">
-    <label class="form-label">Nom complet</label>
-    <div class="input-group">
-      <span class="input-group-text bg-white"><i class="bi bi-person-fill text-secondary"></i></span>
-      <input type="text" class="form-control" formControlName="fullName" placeholder="Ex: John Doe">
-    </div>
-    <div *ngIf="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched" class="text-danger small">
-      Ce champ est requis.
-    </div>
-  </div>
+          <!-- Full Name -->
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-person-fill text-secondary"></i></span>
+              <input type="text" class="form-control" formControlName="fullName" placeholder="Ex: John Doe">
+            </div>
+            <div *ngIf="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched" class="text-danger small">
+              This field is required.
+            </div>
+          </div>
 
-  <!-- Email -->
-  <div class="mb-3">
-    <label class="form-label">Adresse Email</label>
-    <div class="input-group">
-      <span class="input-group-text bg-white"><i class="bi bi-envelope-fill text-secondary"></i></span>
-      <input type="email" class="form-control" formControlName="email" placeholder="exemple@email.com">
-    </div>
-    <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger small">
-      Email invalide ou requis.
-    </div>
-  </div>
+          <!-- Email -->
+          <div class="mb-3">
+            <label class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-envelope-fill text-secondary"></i></span>
+              <input type="email" class="form-control" formControlName="email" placeholder="example@email.com">
+            </div>
+            <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger small">
+              Invalid or required email.
+            </div>
+          </div>
 
-  <!-- Téléphone -->
-  <div class="mb-3">
-    <label class="form-label">Téléphone</label>
-    <div class="input-group">
-      <span class="input-group-text bg-white"><i class="bi bi-telephone-fill text-secondary"></i></span>
-      <input type="text" class="form-control" formControlName="phone" placeholder="0812345678">
-    </div>
-    <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger small">
-      Téléphone requis.
-    </div>
-  </div>
+          <!-- Phone -->
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-telephone-fill text-secondary"></i></span>
+              <input type="text" class="form-control" formControlName="phone" placeholder="0812345678">
+            </div>
+            <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger small">
+              Phone number is required.
+            </div>
+          </div>
 
-  <!-- Mot de passe -->
-  <div class="mb-3">
-    <label class="form-label">Mot de passe</label>
-    <div class="input-group">
-      <span class="input-group-text bg-white"><i class="bi bi-lock-fill text-secondary"></i></span>
-      <input type="password" class="form-control" formControlName="password" placeholder="••••••••">
-    </div>
-    <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger small">
-      Mot de passe requis (au moins 6 caractères).
-    </div>
-  </div>
+          <!-- Password -->
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-lock-fill text-secondary"></i></span>
+              <input type="password" class="form-control" formControlName="password" placeholder="••••••••">
+            </div>
+            <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger small">
+              Password required (at least 6 characters).
+            </div>
+          </div>
 
-  <!-- Rôle -->
-  <div class="mb-3">
-    <label class="form-label">Rôle</label>
-    <select class="form-select" formControlName="role">
-      <option value="">-- Sélectionner un rôle --</option>
-       <option value="fme">FME</option>
-  <option value="vendor_admin">Vendor Admin</option>
-  <option value="pm_analyst">PM Analyst</option>
-  <option value="ops_admin">Ops Admin</option>
-  <option value="noc_supervisor">NOC Supervisor</option>
-    </select>
-    <div *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched" class="text-danger small">
-      Rôle requis.
-    </div>
-  </div>
+          <!-- Role -->
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select class="form-select" formControlName="role">
+              <option value="">-- Select a role --</option>
+              <option value="fme">FME</option>
+              <option value="vendor_admin">Vendor Admin</option>
+              <option value="pm_analyst">PM Analyst</option>
+              <option value="ops_admin">Ops Admin</option>
+              <option value="noc_supervisor">NOC Supervisor</option>
+            </select>
+            <div *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched" class="text-danger small">
+              Role is required.
+            </div>
+          </div>
 
-  <!-- Vendor -->
-<div class="mb-4">
-  <label class="form-label">Vendor</label>
-  <select class="form-select" formControlName="vendorId">
-    <option value="">-- Sélectionner un vendor --</option>
-    <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
-  </select>
-  <div *ngIf="registerForm.get('vendorId')?.invalid && registerForm.get('vendorId')?.touched" class="text-danger small">
-    Veuillez sélectionner un vendor.
-  </div>
-</div>
+          <!-- Vendor -->
+          <div class="mb-4">
+            <label class="form-label">Vendor</label>
+            <select class="form-select" formControlName="vendorId">
+              <option value="">-- Select a vendor --</option>
+              <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
+            </select>
+            <div *ngIf="registerForm.get('vendorId')?.invalid && registerForm.get('vendorId')?.touched" class="text-danger small">
+              Please select a vendor.
+            </div>
+          </div>
 
-  <!-- Bouton -->
-  <div class="d-grid">
-    <button type="submit" class="btn btn-dark btn-lg rounded-pill shadow-sm">
-      <i class="bi bi-person-plus-fill me-2"></i> Ajouter un Utilisateur
-    </button>
-  </div>
+          <!-- Submit Button -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-dark btn-lg rounded-pill shadow-sm">
+              <i class="bi bi-person-plus-fill me-2"></i> Add User
+            </button>
+          </div>
 
-</form>
+        </form>
 
       </div>
-<!-- Bouton retour -->
-<div class="d-grid mt-3">
-  <a routerLink="/home" class="btn btn-outline-secondary btn-lg rounded-pill shadow-sm">
-    <i class="bi bi-arrow-left-circle me-2"></i> Retour au dashboard
-  </a>
-</div>
+
+      <!-- Back Button -->
+      <div class="d-grid mt-3">
+        <a routerLink="/home" class="btn btn-outline-secondary btn-lg rounded-pill shadow-sm">
+          <i class="bi bi-arrow-left-circle me-2"></i> Back to Dashboard
+        </a>
+      </div>
 
     </section>
   </div>

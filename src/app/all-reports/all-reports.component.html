@@ -5,37 +5,37 @@
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="loading-container d-flex flex-column align-items-center justify-content-center py-5">
     <div class="spinner-border text-primary" role="status" style="width: 3.5rem; height: 3.5rem;">
-      <span class="visually-hidden">Chargement en cours...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
-    <span class="mt-3 fs-5 fw-semibold text-primary">Chargement en cours...</span>
+    <span class="mt-3 fs-5 fw-semibold text-primary">Loading...</span>
   </div>
 
-  <!-- Titre & Breadcrumb -->
+  <!-- Title & Breadcrumb -->
   <div class="pagetitle mb-4" data-aos="fade-down" data-aos-duration="800">
     <h1 class="fw-bold fs-3 text-dark d-flex align-items-center gap-2">
-      <i class="bi bi-tools text-primary fs-3"></i> Rapports Reçus
+      <i class="bi bi-tools text-primary fs-3"></i> Received Reports
     </h1>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb small mb-0">
         <li class="breadcrumb-item">
           <a href="#" class="text-primary fw-semibold text-decoration-none">
-            <i class="bi bi-house-door-fill me-1"></i> Accueil
+            <i class="bi bi-house-door-fill me-1"></i> Home
           </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-          <i class="bi bi-list-task me-1"></i> Tous les rapports
+          <i class="bi bi-list-task me-1"></i> All Reports
         </li>
       </ol>
     </nav>
   </div>
 
-  <!-- Message d'erreur -->
+  <!-- Error Message -->
   <div *ngIf="error" class="alert alert-danger d-flex align-items-center gap-2 shadow-sm" data-aos="fade-up">
     <i class="bi bi-exclamation-triangle-fill fs-5"></i>
     <span>{{ error }}</span>
   </div>
 
-  <!-- Boutons d'export -->
+  <!-- Export Buttons -->
   <div class="mb-4 d-flex flex-wrap gap-3" data-aos="fade-up">
     <button (click)="exportPDF()" class="btn btn-outline-danger rounded-pill d-flex align-items-center gap-2 shadow-sm">
       <i class="bi bi-file-earmark-pdf fs-5"></i> PDF
@@ -44,57 +44,57 @@
       <i class="bi bi-file-earmark-excel fs-5"></i> Excel
     </button>
   </div>
-  <!-- Champ de recherche -->
-<div class="mb-3 row" data-aos="fade-up">
-  <div class="col-md-4">
-    <input
-      type="text"
-      class="form-control shadow-sm"
-      placeholder="Rechercher par nom du site..."
-      [(ngModel)]="searchTerm"
-      (input)="applySearch()"
-    />
+
+  <!-- Search Field -->
+  <div class="mb-3 row" data-aos="fade-up">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control shadow-sm"
+        placeholder="Search by site name..."
+        [(ngModel)]="searchTerm"
+        (input)="applySearch()"
+      />
+    </div>
   </div>
-</div>
 
-
-  <!-- Filtres -->
+  <!-- Filters -->
   <div class="mb-4 row g-3 align-items-end" data-aos="fade-up">
     <div class="col-md-3">
       <label for="startDate" class="form-label fw-semibold">
-        <i class="bi bi-calendar-event-fill text-primary me-1"></i> Date début
+        <i class="bi bi-calendar-event-fill text-primary me-1"></i> Start Date
       </label>
       <input type="date" id="startDate" [(ngModel)]="filterStartDate" class="form-control shadow-sm" />
     </div>
     <div class="col-md-3">
       <label for="endDate" class="form-label fw-semibold">
-        <i class="bi bi-calendar-event-fill text-primary me-1"></i> Date fin
+        <i class="bi bi-calendar-event-fill text-primary me-1"></i> End Date
       </label>
       <input type="date" id="endDate" [(ngModel)]="filterEndDate" class="form-control shadow-sm" />
     </div>
     <div class="col-auto d-flex gap-2">
       <button class="btn btn-primary rounded-pill shadow-sm d-flex align-items-center gap-2" (click)="applyDateFilter()">
-        <i class="bi bi-funnel-fill"></i> Filtrer
+        <i class="bi bi-funnel-fill"></i> Filter
       </button>
       <button class="btn btn-secondary rounded-pill shadow-sm d-flex align-items-center gap-2" (click)="resetFilter()">
-        <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+        <i class="bi bi-arrow-counterclockwise"></i> Reset
       </button>
     </div>
   </div>
 
-  <!-- Tableau des rapports -->
+  <!-- Reports Table -->
   <div class="table-responsive shadow-sm rounded border">
-    <table class="table table-hover align-middle text-center mb-0">
+    <table class="table table-hover align-middle text-center mb-0 small">
       <thead class="table-light">
         <tr>
           <th>Site</th>
           <th>Province</th>
-          <th>Région</th>
-          <th>Portefeuille</th>
+          <th>Region</th>
+          <th>Portfolio</th>
           <th>FME</th>
-          <th>Date PM</th>
-          <th>Statut</th>
-          <th>Soumis ?</th>
+          <th>PM Date</th>
+          <th>Status</th>
+          <th>Submitted?</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -117,21 +117,21 @@
           </td>
           <td>
             <span class="fw-semibold" [ngClass]="report.report?.isSubmitted ? 'text-success' : 'text-danger'">
-              {{ report.report?.isSubmitted ? 'Oui' : 'Non' }}
+              {{ report.report?.isSubmitted ? 'Yes' : 'No' }}
             </span>
           </td>
           <td>
             <button
               class="btn btn-sm btn-outline-primary rounded-circle"
               (click)="voirRapport(report)"
-              title="Voir le rapport"
+              title="View report"
             >
               <i class="bi bi-eye-fill"></i>
             </button>
           </td>
         </tr>
         <tr *ngIf="pagedReports.length === 0">
-          <td colspan="9" class="text-center text-muted">Aucun rapport trouvé</td>
+          <td colspan="9" class="text-center text-muted">No reports found</td>
         </tr>
       </tbody>
     </table>
@@ -139,7 +139,7 @@
 
   <!-- Pagination -->
   <div class="d-flex justify-content-center mt-4" *ngIf="totalPages > 1">
-    <nav aria-label="Pagination des rapports">
+    <nav aria-label="Report pagination">
       <ul class="pagination mb-0">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <a class="page-link" (click)="changePage(currentPage - 1)">&laquo;</a>
@@ -158,10 +158,10 @@
     </nav>
   </div>
 
-  <!-- Aucun rapport -->
+  <!-- No Report -->
   <div *ngIf="!loading && !reports.length" class="text-center text-muted my-5" data-aos="fade-in">
     <i class="bi bi-folder-x fs-1"></i>
-    <p class="mt-2 fs-5">Aucun rapport trouvé pour cette période.</p>
+    <p class="mt-2 fs-5">No reports found for this period.</p>
   </div>
 </main>
 
