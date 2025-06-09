@@ -27,4 +27,5 @@ export class FmeService {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.apiUrl}/${id}`, { headers });
   }
+  
 }
