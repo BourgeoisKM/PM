@@ -23,6 +23,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadVendors();
+    this.registerForm.get('vendorId')?.enable();
   }
 
   initForm(): void {
@@ -32,7 +33,7 @@ export class RegisterComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['', Validators.required],
       role: ['', Validators.required],
-      vendorId: ['', Validators.required]
+      vendorId: [{ value: '', disabled: true }, Validators.required]
     });
   }
 

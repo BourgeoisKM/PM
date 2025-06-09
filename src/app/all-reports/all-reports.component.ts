@@ -60,55 +60,48 @@ export class AllReportsComponent implements OnInit {
   constructor(private data: DataService, private router: Router) {}
 
   ngOnInit(): void {
-  this.currentUser = this.data.getCurrentUser();
-  if (!this.currentUser) {
-    console.error("Utilisateur non connecté !");
-    this.router.navigate(['/login']); // redirection vers login
-    return;
+    this.currentUser = this.data.getCurrentUser();
+    if (!this.currentUser) {
+      console.error("Utilisateur non connecté !");
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.loadReports();
   }
 
-  this.loadReports();
-}
-
-
   loadReports(): void {
-  this.loading = true;
-  this.error = null;
+    this.loading = true;
+    this.error = null;
 
-  this.data.getReports().subscribe(
-    (res: Report[]) => {
-      if (res && Array.isArray(res) && res.length > 0) {
-        let filteredReports = res;
-
-        if (this.currentUser?.role === 'vendor_admin') {
-          // On filtre les rapports par vendorId
-          filteredReports = res.filter(r =>
-            r?.report?.fme?.vendorId === this.currentUser?.vendorId
-          );
+    this.data.getReports().subscribe(
+      (res: Report[]) => {
+        if (res && Array.isArray(res) && res.length > 0) {
+          let filteredReports = res;
+          if (this.currentUser?.role === 'vendor_admin') {
+            filteredReports = res.filter(r =>
+              r?.report?.fme?.vendorId === this.currentUser?.vendorId
+            );
+          }
+          this.allReportsBackup = filteredReports;
+          this.reports = [...this.allReportsBackup];
+          this.currentPage = 1;
+          this.calculateTotalPages();
+          this.setPagedReports();
+        } else {
+          this.error = 'Aucun rapport valide trouvé.';
+          this.reports = [];
+          this.pagedReports = [];
+          this.totalPages = 0;
         }
-
-        this.allReportsBackup = filteredReports;
-        this.reports = [...this.allReportsBackup];
-        this.currentPage = 1;
-        this.calculateTotalPages();
-        this.setPagedReports();
-      } else {
-        this.error = 'Aucun rapport valide trouvé.';
-        this.reports = [];
-        this.pagedReports = [];
-        this.totalPages = 0;
+        this.loading = false;
+      },
+      (err: any) => {
+        console.error('Erreur lors du chargement des rapports :', err);
+        this.error = 'Erreur de chargement des rapports.';
+        this.loading = false;
       }
-
-      this.loading = false;
-    },
-    (err: any) => {
-      console.error('Erreur lors du chargement des rapports :', err);
-      this.error = 'Erreur de chargement des rapports.';
-      this.loading = false;
-    }
-  );
-}
-
+    );
+  }
 
   calculateTotalPages(): void {
     this.totalPages = Math.ceil(this.reports.length / this.itemsPerPage);
@@ -175,43 +168,76 @@ export class AllReportsComponent implements OnInit {
     }
   }
 
+
+  private flattenObject(obj: any, prefix = ''): any {
+    let result: any = {};
+    for (const key in obj) {
+      if (!obj.hasOwnProperty(key)) continue;
+      const value = obj[key];
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        Object.assign(result, this.flattenObject(value, newKey));
+      } else {
+        result[newKey] = value;
+      }
+    }
+    return result;
+  }
+
   exportExcel(): void {
-    if (!this.reports.length) {
-      console.warn("Aucun rapport à exporter.");
+  if (!this.reports.length) {
+    console.warn("Aucun rapport à exporter.");
+    return;
+  }
+
+  const flattenObject = (obj: any, prefix = ''): any => {
+    let result: any = {};
+    for (const key in obj) {
+      if (!obj.hasOwnProperty(key)) continue;
+      const value = obj[key];
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        Object.assign(result, flattenObject(value, newKey));
+      } else if (!Array.isArray(value)) {
+        result[newKey] = value;
+      }
+    }
+    return result;
+  };
+
+  const dataToExport: any[] = [];
+
+  this.reports.forEach(report => {
+    const baseReportData = flattenObject(report.report || {});
+
+
+    if (!report['sections'] || !Array.isArray(report['sections']) || report['sections'].length === 0) {
+      dataToExport.push(baseReportData);
       return;
     }
 
-    const dataToExport = this.reports.map(r => {
-      const report = r.report || {};
-      const site = report.site || {};
-      const fme = report.fme || {};
-      return {
-        'Nom du site': site.name || '',
-        'ID du site': site.siteId || '',
-        'Province': site.province || '',
-        'Région': site.region || '',
-        'Type de site': site.siteType || '',
-        'Configuration Électrique': site.powerConfiguration || '',
-        'Portefeuille': site.portfolio || '',
-        'Nom(s) du(s) Tenant(s)': site.tenantsNames || '',
-        'FME': fme.fullName || report.fmeName || '',
-        'Type de PM': report.pmType || '',
-        'Date planifiée': report.pmPlannedDate ? new Date(report.pmPlannedDate).toLocaleDateString() : '',
-        'Date réelle': report.pmActualDate ? new Date(report.pmActualDate).toLocaleDateString() : '',
-        'Statut': report.status ? report.status.toUpperCase() : '',
-        'Soumis ?': report.isSubmitted ? 'Oui' : 'Non',
-        'Date de soumission': report.submittedAt ? new Date(report.submittedAt).toLocaleString() : '',
-        'Commentaire de validation': report.validationComment || '',
-        'Créé le': report.createdAt ? new Date(report.createdAt).toLocaleString() : '',
-        'Modifié le': report.updatedAt ? new Date(report.updatedAt).toLocaleString() : ''
-      };
-    });
+    report['sections'].forEach((section: any) => {
+      const flatSection = flattenObject(section, 'section');
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapports');
-    XLSX.writeFile(workbook, 'rapports.xlsx');
-  }
+      if (!section.items || !Array.isArray(section.items) || section.items.length === 0) {
+        dataToExport.push({ ...baseReportData, ...flatSection });
+        return;
+      }
+
+     
+      section.items.forEach((item: any) => {
+        const flatItem = flattenObject(item, 'item');
+        dataToExport.push({ ...baseReportData, ...flatSection, ...flatItem });
+      });
+    });
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapports');
+  XLSX.writeFile(workbook, 'rapports_complets.xlsx');
+}
+
 
   voirRapport(report: Report): void {
     const reportId = report?.report?.id || report?.['id'];

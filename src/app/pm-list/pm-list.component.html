@@ -3,9 +3,9 @@
 
 <main id="main" class="main">
   <!-- Page Title -->
-  <div class="pagetitle" data-aos="fade-down">
+  <div class="pagetitle mb-4" data-aos="fade-down">
     <h1 class="fw-bold text-dark">
-      <i class="bi bi-tools me-2"></i>Assigned PMs
+      <i class="bi bi-tools me-2"></i> Assigned PMs
     </h1>
     <nav>
       <ol class="breadcrumb">
@@ -21,11 +21,11 @@
 
   <!-- Rôle utilisateur -->
   <div class="container mb-4" data-aos="fade-in">
-    <div *ngIf="userRole === 'ops_admin'" class="alert alert-info">
+    <div *ngIf="userRole === 'ops_admin'" class="alert alert-info shadow-sm">
       <i class="bi bi-shield-lock-fill me-2"></i>
       <strong>OPS Admin :</strong> You are viewing all vendors' PM assignments.
     </div>
-    <div *ngIf="userRole === 'vendor_admin'" class="alert alert-primary">
+    <div *ngIf="userRole === 'vendor_admin'" class="alert alert-primary shadow-sm">
       <i class="bi bi-person-badge-fill me-2"></i>
       <strong>Vendor Admin :</strong> You are viewing your team’s PM assignments only.
     </div>
@@ -34,22 +34,62 @@
   <!-- Main Content -->
   <div class="container py-4">
     <!-- Section Header -->
-    <div class="text-center mb-4" data-aos="zoom-in">
+    <div class="text-center mb-5" data-aos="zoom-in">
       <h2 class="text-primary fw-bold">
-        <i class="bi bi-calendar-check-fill me-2"></i>Scheduled Preventive Maintenances
+        <i class="bi bi-calendar-check-fill me-2"></i> Scheduled Preventive Maintenances
       </h2>
       <p class="text-muted">Overview of assigned PM tasks</p>
     </div>
 
+    <!-- Filters + Search -->
+    <div class="card shadow-sm mb-4" data-aos="fade-up">
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate">
+          </div>
+          <div class="col-md-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate">
+          </div>
+          <div class="col-md-3">
+            <label for="search" class="form-label">Search</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Site, ticket, type, statut ou FME"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyDateFilter()"
+            />
+          </div>
+          <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary w-100" (click)="applyDateFilter()">
+              <i class="bi bi-funnel-fill me-1"></i> Filter
+            </button>
+            <button class="btn btn-secondary" (click)="resetDateFilter()">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-end mt-3">
+          <button class="btn btn-outline-success" (click)="exportToExcel()">
+            <i class="bi bi-file-earmark-excel-fill me-1"></i> Export to Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Alert when no PMs assigned -->
     <div *ngIf="paginatedSchedules.length === 0" class="alert alert-warning text-center" data-aos="fade-in">
-      No PM assigned yet.
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> No PM assigned yet.
     </div>
 
     <!-- PM Cards -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" *ngFor="let pm of paginatedSchedules" data-aos="fade-up" data-aos-delay="100">
-        <div class="card shadow-sm border border-2 border-info">
+        <div class="card shadow-lg border-0 h-100">
           <div class="card-body">
             <h5 class="card-title text-success fw-bold">{{ pm.siteName || 'Unknown site' }}</h5>
             <p class="card-text">
@@ -57,11 +97,14 @@
               <strong>Type:</strong>
               <span class="badge bg-info text-dark">{{ pm.pmType }}</span><br>
               <strong>Ticket:</strong> {{ pm.ticket || 'N/A' }}<br>
-              <strong>Status:</strong> {{ pm.isUsed ? 'Used' : 'Pending' }}<br>
+              <strong>Status:</strong>
+              <span class="badge" [ngClass]="pm.isUsed ? 'bg-success' : 'bg-warning text-dark'">
+                {{ pm.isUsed ? 'Used' : 'Pending' }}
+              </span><br>
               <strong>FME:</strong> {{ pm.fmeName || 'Not assigned' }}
             </p>
           </div>
-          <div class="card-footer text-end">
+          <div class="card-footer bg-light border-0 text-end">
             <span class="badge bg-danger text-white">Assigned</span>
           </div>
         </div>

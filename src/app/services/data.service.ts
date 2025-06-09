@@ -78,24 +78,31 @@ export class DataService {
 
   // Vendors filtrés selon l'utilisateur connecté, en Observable
   getVendors(): Observable<any[]> {
-    const allVendors = [
-      { id: 'fe2f623f-1900-431f-8684-7659e180a207', name: 'NETIS' },
-      { id: 'fe85da04-2d40-40eb-86f5-682fde6f9573', name: 'NOVACOM' },
-      { id: '8014a694-842d-48fd-9c4d-dc32cf15fb93', name: 'GLOBAL TECH' },
-      { id: 'c257ad68-2390-425a-9946-f800c48fe8c4', name: 'GEEK' },
-      { id: '3aed5813-e6a8-4670-b1f0-775aa4fbe9be', name: 'East Castle' }
-    ];
+  const allVendors = [
+    { id: 'fe2f623f-1900-431f-8684-7659e180a207', name: 'NETIS' },
+    { id: 'fe85da04-2d40-40eb-86f5-682fde6f9573', name: 'NOVACOM' },
+    { id: '8014a694-842d-48fd-9c4d-dc32cf15fb93', name: 'GLOBAL TECH' },
+    { id: 'c257ad68-2390-425a-9946-f800c48fe8c4', name: 'GEEK' },
+    { id: '3aed5813-e6a8-4670-b1f0-775aa4fbe9be', name: 'East Castle' }
+  ];
 
-    return this.getCurrentUser().pipe(
-      // on filtre selon user.vendorId si présent
-      map(user => {
-        if (user && user.vendorId) {
-          return allVendors.filter(vendor => vendor.id === user.vendorId);
-        }
-        return [];
-      })
-    );
-  }
+  return this.getCurrentUser().pipe(
+    map(user => {
+      // Si admin => retourne tout
+      if (user?.role === 'ops_admin') {
+        return allVendors;
+      }
+
+      // Sinon, filtre selon vendorId
+      if (user?.vendorId) {
+        return allVendors.filter(vendor => vendor.id === user.vendorId);
+      }
+
+      return [];
+    })
+  );
+}
+
 
   getSites(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.baseUrl}/sites`, {

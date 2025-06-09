@@ -84,16 +84,16 @@
   </div>
 
   <!-- Vendor -->
-  <div class="mb-4">
-    <label class="form-label">Vendor</label>
-    <select class="form-select" formControlName="vendorId">
-      <option value="">-- Sélectionner un vendor --</option>
-      <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
-    </select>
-    <div *ngIf="registerForm.get('vendorId')?.invalid && registerForm.get('vendorId')?.touched" class="text-danger small">
-      Veuillez sélectionner un vendor.
-    </div>
+<div class="mb-4">
+  <label class="form-label">Vendor</label>
+  <select class="form-select" formControlName="vendorId">
+    <option value="">-- Sélectionner un vendor --</option>
+    <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.name }}</option>
+  </select>
+  <div *ngIf="registerForm.get('vendorId')?.invalid && registerForm.get('vendorId')?.touched" class="text-danger small">
+    Veuillez sélectionner un vendor.
   </div>
+</div>
 
   <!-- Bouton -->
   <div class="d-grid">
