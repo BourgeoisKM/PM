@@ -42,12 +42,13 @@
     </li>
 
     <!-- Autres liens -->
-    <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="350">
-      <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/assigned">
-        <i class="bi bi-file-earmark-person-fill text-success fs-5"></i>
-        <span class="fw-semibold">Assigner PM</span>
-      </a>
-    </li>
+    <li *ngIf="role !== 'vendor_admin'" class="nav-item mb-2" data-aos="fade-right" data-aos-delay="350">
+  <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/assigned">
+    <i class="bi bi-file-earmark-person-fill text-success fs-5"></i>
+    <span class="fw-semibold">Assigner PM</span>
+  </a>
+</li>
+
 
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="400">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/list-pm">
