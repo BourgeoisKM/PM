@@ -47,11 +47,11 @@
 
   <!-- Search Field -->
   <div class="mb-3 row" data-aos="fade-up">
-    <div class="col-md-4">
+    <div class="col-md-5">
       <input
         type="text"
         class="form-control shadow-sm"
-        placeholder="Search by site name..."
+        placeholder="Search by Site name, Agent, Vendor..."
         [(ngModel)]="searchTerm"
         (input)="applySearch()"
       />
@@ -86,54 +86,56 @@
   <div class="table-responsive shadow-sm rounded border">
     <table class="table table-hover align-middle text-center mb-0 small">
       <thead class="table-light">
-        <tr>
-          <th>Site</th>
-          <th>Province</th>
-          <th>Region</th>
-          <th>Portfolio</th>
-          <th>FME</th>
-          <th>PM Date</th>
-          <th>Status</th>
-          <th>Submitted?</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let report of pagedReports">
-          <td>{{ report.report?.site?.name }}</td>
-          <td>{{ report.report?.site?.province }}</td>
-          <td>{{ report.report?.site?.region }}</td>
-          <td>{{ report.report?.site?.portfolio }}</td>
-          <td>{{ report.report?.fme?.fullName || report.report?.fmeName }}</td>
-          <td>{{ report.report?.pmPlannedDate | date: 'dd/MM/yyyy' }}</td>
-          <td>
-            <span [ngClass]="{
-              'badge bg-success': report.report?.status === 'Closed',
-              'badge bg-warning text-dark': report.report?.status === 'Open',
-              'badge bg-secondary': !report.report?.status
-            }">
-              {{ report.report?.status || 'N/A' }}
-            </span>
-          </td>
-          <td>
-            <span class="fw-semibold" [ngClass]="report.report?.isSubmitted ? 'text-success' : 'text-danger'">
-              {{ report.report?.isSubmitted ? 'Yes' : 'No' }}
-            </span>
-          </td>
-          <td>
-            <button
-              class="btn btn-sm btn-outline-primary rounded-circle"
-              (click)="voirRapport(report)"
-              title="View report"
-            >
-              <i class="bi bi-eye-fill"></i>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="pagedReports.length === 0">
-          <td colspan="9" class="text-center text-muted">No reports found</td>
-        </tr>
-      </tbody>
+  <tr>
+    <th>Site Name</th>
+    <th>Province</th>
+    <th>Vendor</th>
+    <th>Agent</th>
+    <th>Planned Date</th>
+    <th>Actual Date</th>
+    <th>Status</th>
+    <th>Submitted?</th>
+    <th>Action</th>
+  </tr>
+</thead>
+<tbody>
+  <tr *ngFor="let report of pagedReports">
+    <td>{{ report.report?.site?.name }}</td>
+    <td>{{ report.report?.site?.province }}</td>
+    <td>{{ getVendorName(report) }}</td>
+    <td>{{ report.report?.fme?.fullName || report.report?.fmeName }}</td>
+    <td>{{ report.report?.pmPlannedDate | date: 'dd/MM/yyyy' }}</td>
+    <td>{{ report.report?.pmActualDate ? (report.report?.pmActualDate | date: 'dd/MM/yyyy') : 'N/A' }}</td>
+    <td>
+      <span [ngClass]="{
+        'badge bg-success': report.report?.status === 'Closed' || report.report?.status === 'submitted',
+        'badge bg-warning text-dark': report.report?.status === 'Open',
+        'badge bg-secondary': !report.report?.status
+      }">
+        {{ report.report?.status || 'N/A' }}
+      </span>
+    </td>
+    <td>
+      <span class="fw-semibold" [ngClass]="report.report?.isSubmitted ? 'text-success' : 'text-danger'">
+        {{ report.report?.isSubmitted ? 'Yes' : 'No' }}
+      </span>
+    </td>
+    <td>
+      <button
+        class="btn btn-sm btn-outline-primary rounded-circle"
+        (click)="voirRapport(report)"
+        title="View report"
+      >
+        <i class="bi bi-eye-fill"></i>
+      </button>
+    </td>
+  </tr>
+  <tr *ngIf="pagedReports.length === 0">
+    <td colspan="9" class="text-center text-muted">No reports found</td>
+  </tr>
+</tbody>
+
+
     </table>
   </div>
 
