@@ -6,67 +6,98 @@
     <!-- Page Header -->
     <div id="rapportContent">
       <div class="text-center mb-5">
-        <h2 class="fw-bold text-primary">Maintenance Report</h2>
-        <p class="text-muted">Review detailed information about the preventive intervention.</p>
+        <h1 class="fw-bold text-primary mb-3">
+          <i class="bi bi-file-earmark-text me-2"></i>
+          Maintenance Report
+        </h1>
+        <p class="text-muted fs-5">Review detailed information about the preventive intervention</p>
       </div>
 
-      <!-- Print & Export Buttons -->
-      <div class="d-flex justify-content-end mb-3" id="buttons">
-        <button class="btn btn-lg btn-primary me-2 btn-animate" (click)="printPage()">Print</button>
-        <button class="btn btn-danger btn-lg" (click)="exportToPDF()">Export PDF</button>
+      <!-- Export Button -->
+      <div class="d-flex justify-content-end mb-4" id="buttons">
+        <button class="btn btn-danger btn-lg px-4 py-2 btn-animate" (click)="exportToPDF()">
+          <i class="bi bi-file-earmark-pdf me-2"></i>
+          Export PDF
+        </button>
       </div>
 
       <!-- Loading Indicator -->
-      <div *ngIf="isLoading" class="text-center">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-2">Loading report...</p>
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-muted fs-5">Loading report...</p>
       </div>
 
       <!-- Site Information -->
       <div *ngIf="rapport.report?.site" class="card shadow-sm mb-4 report-block animate__animated animate__fadeInUp">
-        <div class="card-header bg-primary text-white fw-semibold">Site Information</div>
-        <div class="card-body">
+        <div class="card-header bg-gradient bg-primary text-white py-3">
+          <h5 class="mb-0 fw-semibold">
+            <i class="bi bi-geo-alt me-2"></i>
+            Site Information
+          </h5>
+        </div>
+        <div class="card-body p-4">
           <div class="row g-3">
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Name:</div>
-                <div class="info-value">{{ rapport.report.site.name }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-building me-2 text-primary"></i>
+                  Site Name:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.name }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Region / Province:</div>
-                <div class="info-value">{{ rapport.report.site.region }} / {{ rapport.report.site.province }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-map me-2 text-primary"></i>
+                  Region / Province:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.region }} / {{ rapport.report.site.province }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Coordinates:</div>
-                <div class="info-value">{{ rapport.report.site.latitude }}, {{ rapport.report.site.longitude }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-geo me-2 text-primary"></i>
+                  Coordinates:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.latitude }}, {{ rapport.report.site.longitude }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Tenants:</div>
-                <div class="info-value">{{ rapport.report.site.tenantsNames }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-people me-2 text-primary"></i>
+                  Tenants:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.tenantsNames }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Portfolio:</div>
-                <div class="info-value">{{ rapport.report.site.portfolio }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-briefcase me-2 text-primary"></i>
+                  Portfolio:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.portfolio }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Power Configuration:</div>
-                <div class="info-value">{{ rapport.report.site.powerConfiguration }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-lightning me-2 text-primary"></i>
+                  Power Configuration:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.powerConfiguration }}</span>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="d-flex">
-                <div class="info-label">Site Type:</div>
-                <div class="info-value">{{ rapport.report.site.siteType }}</div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-diagram-3 me-2 text-primary"></i>
+                  Site Type:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.siteType }}</span>
               </div>
             </div>
           </div>
@@ -75,39 +106,59 @@
 
       <!-- Report Data -->
       <div *ngIf="rapport.report" class="card shadow-sm mb-4 report-block animate__animated animate__fadeInUp animate__delay-1s">
-        <div class="card-header bg-secondary text-white fw-semibold">Report Data</div>
-        <div class="card-body">
+        <div class="card-header bg-gradient bg-secondary text-white py-3">
+          <h5 class="mb-0 fw-semibold">
+            <i class="bi bi-clipboard-data me-2"></i>
+            Report Summary
+          </h5>
+        </div>
+        <div class="card-body p-4">
           <div class="row g-3">
-            <div class="col-md-4">
-              <div class="d-flex">
-                <div class="info-label">FME:</div>
-                <div class="info-value">{{ rapport.report.fmeName }}</div>
+            <div class="col-lg-4">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-person-badge me-2 text-secondary"></i>
+                  FME:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.fmeName }}</span>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="d-flex">
-                <div class="info-label">Scheduled PM:</div>
-                <div class="info-value">{{ rapport.report.pmPlannedDate | date:'mediumDate' }}</div>
+            <div class="col-lg-4">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-calendar-event me-2 text-secondary"></i>
+                  Scheduled PM:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.pmPlannedDate | date:'mediumDate' }}</span>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="d-flex">
-                <div class="info-label">Performed PM:</div>
-                <div class="info-value">{{ rapport.report.pmActualDate | date:'mediumDate' }}</div>
+            <div class="col-lg-4">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-calendar-check me-2 text-secondary"></i>
+                  Performed PM:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.pmActualDate | date:'mediumDate' }}</span>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="d-flex">
-                <div class="info-label">PM Type:</div>
-                <div class="info-value">{{ rapport.report.pmType }}</div>
+            <div class="col-lg-4">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-gear me-2 text-secondary"></i>
+                  PM Type:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.pmType }}</span>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="d-flex">
-                <div class="info-label">Status:</div>
-                <div class="info-value">
-                  <span class="badge bg-success px-3 py-2 text-uppercase">{{ rapport.report.status }}</span>
-                </div>
+            <div class="col-lg-4">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
+                  <i class="bi bi-check-circle me-2 text-secondary"></i>
+                  Status:
+                </span>
+                <span class="info-value-simple">
+                  <span class="badge bg-success px-3 py-2 text-uppercase fs-6">{{ rapport.report.status }}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -116,42 +167,102 @@
 
       <!-- Sections -->
       <ng-container *ngIf="rapport.report?.sections?.length">
-        <div *ngFor="let section of rapport.report.sections" class="card shadow-sm mb-4 report-block animate__animated animate__fadeInUp animate__delay-2s">
-          <div class="card-header bg-dark text-white fw-semibold">{{ section.title }}</div>
-          <div class="card-body">
-            <div class="d-flex mb-3">
-              <div class="info-label">Reported Issue:</div>
+        <div *ngFor="let section of rapport.report.sections; let i = index" 
+             class="card shadow-sm mb-4 report-block animate__animated animate__fadeInUp" 
+             [style.animation-delay]="(i * 0.1 + 0.3) + 's'">
+          <div class="card-header bg-gradient bg-dark text-white py-3">
+            <h5 class="mb-0 fw-semibold">
+              <i class="bi bi-list-check me-2"></i>
+              {{ section.title }}
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4 p-3 rounded" 
+                 [ngClass]="section.hasIssue ? 'bg-danger bg-opacity-10' : 'bg-success bg-opacity-10'">
+              <div class="info-label me-3">
+                <i class="bi bi-exclamation-triangle me-2" 
+                   [ngClass]="section.hasIssue ? 'text-danger' : 'text-success'"></i>
+                Issue Detected:
+              </div>
               <div class="info-value">
-                <span *ngIf="section.hasIssue" class="badge bg-danger ms-2">Yes</span>
-                <span *ngIf="!section.hasIssue" class="badge bg-success ms-2">No</span>
+                <span *ngIf="section.hasIssue" class="badge bg-danger px-3 py-2 fs-6">
+                  <i class="bi bi-x-circle me-1"></i>Yes
+                </span>
+                <span *ngIf="!section.hasIssue" class="badge bg-success px-3 py-2 fs-6">
+                  <i class="bi bi-check-circle me-1"></i>No
+                </span>
               </div>
             </div>
-            <hr />
 
             <!-- Items -->
-            <div *ngFor="let item of section.items" class="mb-4 item-container">
-              <h6 class="item-title">{{ item.label }}</h6>
+            <div *ngFor="let item of section.items; let itemIndex = index" class="item-container mb-4">
+              <div class="item-header p-3 mb-3">
+                <h6 class="item-title mb-0">
+                  <i class="bi bi-dot me-2 text-primary"></i>
+                  {{ item.label }}
+                </h6>
+              </div>
 
               <!-- Values (showing only the most recent) -->
-              <div *ngIf="getLatestValue(item.id) as value" class="item-value-container">
-                <div class="d-flex">
-                  <div class="info-value">{{ value.value }}</div>
+              <div *ngIf="getLatestValue(item.id) as value" class="item-content p-3">
+                <div class="response-section mb-3">
+                  <div class="response-label">
+                    <i class="bi bi-chat-square-text me-2 text-primary"></i>
+                    Response:
+                  </div>
+                  <div class="response-value">{{ value.value }}</div>
                 </div>
-                <div *ngIf="value.comment" class="item-comment">
-                  <em>Comment:</em> {{ value.comment }}
+                <div *ngIf="value.comment" class="comment-section">
+                  <div class="comment-label">
+                    <i class="bi bi-chat-square-dots me-2 text-muted"></i>
+                    Comment:
+                  </div>
+                  <div class="comment-text">{{ value.comment }}</div>
+                </div>
+              </div>
+
+              <!-- Show "Aucune Réponse" only for text fields without photos -->
+              <div *ngIf="!getLatestValue(item.id) && getItemPhotos(item.id).length === 0" class="item-content p-3">
+                <div class="no-response-section">
+                  <div class="response-label">
+                    <i class="bi bi-chat-square-text me-2 text-primary"></i>
+                    Response:
+                  </div>
+                  <div class="no-response-text">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    Aucune Réponse
+                  </div>
                 </div>
               </div>
 
               <!-- Images -->
-              <div class="row mt-3">
-                <ng-container *ngFor="let photo of getItemPhotos(item.id)">
-                  <div class="col-md-4 mb-3">
-                    <div class="photo-container">
-                      <img [src]="photo.url || photo.base64Image" class="img-fluid rounded border img-hover" [alt]="'Photo ' + item.label" />
-                      <small *ngIf="photo.comment" class="photo-comment mt-2">{{ photo.comment }}</small>
+              <div *ngIf="getItemPhotos(item.id).length > 0" class="photos-section mt-4">
+                <div class="photos-header mb-3">
+                  <h6 class="mb-0 text-muted">
+                    <i class="bi bi-images me-2"></i>
+                    Photos ({{ getItemPhotos(item.id).length }})
+                  </h6>
+                </div>
+                <div class="row g-3">
+                  <ng-container *ngFor="let photo of getItemPhotos(item.id)">
+                    <div class="col-md-4 col-lg-3">
+                      <div class="photo-container">
+                        <div class="photo-wrapper">
+                          <img [src]="photo.url || photo.base64Image" 
+                               class="img-fluid rounded shadow-sm img-hover" 
+                               [alt]="'Photo ' + item.label" />
+                          <div class="photo-overlay">
+                            <i class="bi bi-zoom-in text-white"></i>
+                          </div>
+                        </div>
+                        <small *ngIf="photo.comment" class="photo-comment mt-2 d-block text-center">
+                          <i class="bi bi-chat-square-quote me-1"></i>
+                          {{ photo.comment }}
+                        </small>
+                      </div>
                     </div>
-                  </div>
-                </ng-container>
+                  </ng-container>
+                </div>
               </div>
             </div>
           </div>
@@ -159,8 +270,12 @@
       </ng-container>
 
       <!-- No sections -->
-      <div *ngIf="!rapport.report?.sections?.length" class="alert alert-warning">
-        No sections available for this report.
+      <div *ngIf="!rapport.report?.sections?.length" class="alert alert-warning d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle me-3 fs-4"></i>
+        <div>
+          <strong>No sections available</strong><br>
+          <small>No sections are available for this report.</small>
+        </div>
       </div>
     </div>
   </div>

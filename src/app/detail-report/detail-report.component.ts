@@ -70,6 +70,19 @@ export class DetailReportComponent implements OnInit {
     return (this.rapport.photos || []).filter((p: any) => p.itemId === itemId)
   }
 
+  // Check if an item should show "Aucune Réponse"
+  private shouldShowNoResponse(item: any, value: any, itemPhotos: any[]): boolean {
+    // If there's a value, don't show "Aucune Réponse"
+    if (value?.value) return false
+
+    // If there are photos but no text value, don't show "Aucune Réponse"
+    // (assuming it's a photo-only question)
+    if (itemPhotos.length > 0 && !value?.value) return false
+
+    // If no value and no photos, show "Aucune Réponse"
+    return true
+  }
+
   // Convert image URL to base64
   private async convertImageToBase64(url: string): Promise<string> {
     try {
@@ -112,10 +125,6 @@ export class DetailReportComponent implements OnInit {
     return convertedPhotos
   }
 
-  printPage(): void {
-    window.print()
-  }
-
   async exportToPDF(): Promise<void> {
     const report = this.rapport?.report
     const values = this.rapport?.values || []
@@ -141,9 +150,56 @@ export class DetailReportComponent implements OnInit {
       return itemValues[itemValues.length - 1]
     }
 
+    // Get report date (use actual date or planned date as fallback)
+    const reportDate = report.pmActualDate || report.pmPlannedDate
+    const formattedDate = reportDate
+      ? new Date(reportDate).toLocaleDateString("fr-FR")
+      : new Date().toLocaleDateString("fr-FR")
+
+    // Créer le nom du fichier avec le nom du site
+    const siteName = report.site?.name || "Unknown_Site"
+    const sanitizedSiteName = siteName.replace(/[^a-zA-Z0-9]/g, "_") // Remplacer les caractères spéciaux
+    const fileName = `PM_Report_${sanitizedSiteName}_${formattedDate.replace(/\//g, "-")}`
+
     // Utiliser any pour éviter les erreurs de type avec pdfMake
     const docDefinition: any = {
-      pageMargins: [40, 60, 40, 60],
+      pageMargins: [35, 80, 35, 50],
+      header: {
+        stack: [
+          {
+            table: {
+              widths: ["60%", "40%"],
+              body: [
+                [
+                  {
+                    stack: [
+                      { text: `Site: ${report.site?.name || "N/A"}`, style: "headerLeft" },
+                      { text: `Date: ${formattedDate}`, style: "headerLeftSmall" },
+                    ],
+                  },
+                  {
+                    stack: [
+                      { text: "EastCastle Infrastructure", style: "headerRight" },
+                      { text: "Preventive Maintenance", style: "headerRightSmall" },
+                    ],
+                    alignment: "right",
+                  },
+                ],
+              ],
+            },
+            layout: "noBorders",
+            margin: [35, 15, 35, 0],
+          },
+          // Ligne de séparation décorative avec opacité réduite
+          {
+            canvas: [
+              { type: "line", x1: 35, y1: 0, x2: 560, y2: 0, lineWidth: 2, lineColor: "#3498db", opacity: 0.5 },
+              { type: "line", x1: 35, y1: 3, x2: 560, y2: 3, lineWidth: 1, lineColor: "#e9ecef", opacity: 0.5 },
+            ],
+            margin: [0, 5, 0, 0],
+          },
+        ],
+      },
       content: [
         { text: "Preventive Maintenance Report", style: "header" },
 
@@ -185,11 +241,11 @@ export class DetailReportComponent implements OnInit {
               [{ text: "FME:", style: "tableHeader" }, { text: report.fmeName || "N/A" }],
               [
                 { text: "PM Planned Date:", style: "tableHeader" },
-                { text: report.pmPlannedDate ? new Date(report.pmPlannedDate).toLocaleDateString() : "N/A" },
+                { text: report.pmPlannedDate ? new Date(report.pmPlannedDate).toLocaleDateString("fr-FR") : "N/A" },
               ],
               [
                 { text: "PM Actual Date:", style: "tableHeader" },
-                { text: report.pmActualDate ? new Date(report.pmActualDate).toLocaleDateString() : "N/A" },
+                { text: report.pmActualDate ? new Date(report.pmActualDate).toLocaleDateString("fr-FR") : "N/A" },
               ],
               [{ text: "PM Type:", style: "tableHeader" }, { text: report.pmType || "N/A" }],
               [
@@ -209,19 +265,19 @@ export class DetailReportComponent implements OnInit {
           bold: true,
           alignment: "center",
           color: "#2c3e50",
-          margin: [0, 0, 0, 20],
+          margin: [0, 0, 0, 15],
         },
         subheader: {
           fontSize: 16,
           bold: true,
           color: "#3498db",
-          margin: [0, 10, 0, 5],
+          margin: [0, 15, 0, 8],
         },
         sectionTitle: {
           fontSize: 14,
           bold: true,
           color: "#2c3e50",
-          margin: [0, 15, 0, 5],
+          margin: [0, 0, 0, 4],
         },
         tableHeader: {
           bold: true,
@@ -229,32 +285,36 @@ export class DetailReportComponent implements OnInit {
           fillColor: "#f8f9fa",
         },
         itemTitle: {
-          fontSize: 12,
-          bold: true,
-          color: "#2c3e50",
+          fontSize: 11,
+          color: "#495057",
+          fillColor: "#f1f3f4",
+          margin: [0, 0, 0, 0],
         },
         itemValue: {
-          fontSize: 12,
+          fontSize: 13,
           bold: true,
           color: "#2c3e50",
+          margin: [0, 0, 0, 0],
         },
         noResponse: {
-          fontSize: 12,
+          fontSize: 13,
           bold: true,
           color: "#e74c3c",
           italics: true,
+          margin: [0, 0, 0, 0],
         },
         itemComment: {
           fontSize: 10,
           italics: true,
           color: "#7f8c8d",
-          margin: [0, 5, 0, 0],
+          fillColor: "#fafbfc",
+          margin: [0, 0, 0, 0],
         },
         photoComment: {
           fontSize: 9,
           italics: true,
           color: "#7f8c8d",
-          margin: [0, 5, 0, 10],
+          margin: [0, 3, 0, 5],
         },
         issueDetected: {
           color: "#e74c3c",
@@ -268,6 +328,31 @@ export class DetailReportComponent implements OnInit {
           color: "#27ae60",
           bold: true,
         },
+        // Styles d'en-tête avec opacité réduite
+        headerLeft: {
+          fontSize: 12,
+          bold: true,
+          color: "#2c3e50",
+          opacity: 0.5,
+        },
+        headerLeftSmall: {
+          fontSize: 10,
+          color: "#7f8c8d",
+          opacity: 0.5,
+          margin: [0, 2, 0, 0],
+        },
+        headerRight: {
+          fontSize: 14,
+          bold: true,
+          color: "#3498db",
+          opacity: 0.5,
+        },
+        headerRightSmall: {
+          fontSize: 10,
+          color: "#7f8c8d",
+          opacity: 0.5,
+          margin: [0, 2, 0, 0],
+        },
       },
       defaultStyle: {
         fontSize: 11,
@@ -275,69 +360,125 @@ export class DetailReportComponent implements OnInit {
       },
     }
 
-    // Ajouter les sections au contenu
+    // Ajouter les sections au contenu - APPROCHE SIMPLIFIÉE
     const sectionsContent: any[] = []
 
-    for (const section of report.sections) {
-      // Ajouter le titre de la section
-      sectionsContent.push(
-        { text: section.title, style: "sectionTitle", margin: [0, 20, 0, 5] },
-        {
-          text: `Issue detected: ${section.hasIssue ? "Yes" : "No"}`,
-          style: section.hasIssue ? "issueDetected" : "noIssue",
-          margin: [0, 0, 0, 10],
-        },
-        { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }], margin: [0, 0, 0, 10] },
-      )
+    for (let sectionIndex = 0; sectionIndex < report.sections.length; sectionIndex++) {
+      const section = report.sections[sectionIndex]
 
-      // Ajouter les items
+      // Titre de la section - SANS pageBreakBefore complexe
+      sectionsContent.push({
+        text: section.title,
+        style: "sectionTitle",
+        margin: [0, sectionIndex === 0 ? 20 : 15, 0, 5],
+      })
+
+      // Issue detected
+      sectionsContent.push({
+        text: `Issue detected: ${section.hasIssue ? "Yes" : "No"}`,
+        style: section.hasIssue ? "issueDetected" : "noIssue",
+        margin: [0, 0, 0, 10],
+      })
+
+      // Ligne de séparation
+      sectionsContent.push({
+        canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: "#e9ecef" }],
+        margin: [0, 0, 0, 8],
+      })
+
+      // Traiter TOUS les items de la même manière
       for (const item of section.items) {
         const value = getLatestItemValue(item.id)
         const itemPhotos = convertedPhotos.filter((p: any) => p.itemId === item.id)
 
-        // Créer la ligne question-réponse
-        const questionResponse = {
+        const itemContent: any[] = []
+
+        // Question avec background gris
+        itemContent.push({
           table: {
-            widths: ["40%", "60%"],
-            body: [
-              [
-                { text: item.label, style: "itemTitle" },
-                {
-                  text: value?.value || "Aucune Réponse",
-                  style: value?.value ? "itemValue" : "noResponse",
-                },
-              ],
-            ],
+            widths: ["100%"],
+            body: [[{ text: item.label, style: "itemTitle" }]],
           },
-          layout: "noBorders",
-          margin: [0, 5, 0, 0],
-        }
+          layout: {
+            fillColor: () => "#f1f3f4",
+            hLineWidth: () => 0,
+            vLineWidth: () => 0,
+            paddingLeft: () => 8,
+            paddingRight: () => 8,
+            paddingTop: () => 6,
+            paddingBottom: () => 6,
+          },
+          margin: [0, 0, 0, 2],
+        })
 
-        sectionsContent.push(questionResponse)
-
-        // Ajouter le commentaire s'il existe
-        if (value?.comment) {
-          sectionsContent.push({
-            text: `Comment: ${value.comment}`,
-            style: "itemComment",
-            margin: [0, 2, 0, 5],
+        // Réponse
+        if (value?.value) {
+          itemContent.push({
+            table: {
+              widths: ["100%"],
+              body: [[{ text: value.value, style: "itemValue" }]],
+            },
+            layout: {
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              paddingLeft: () => 8,
+              paddingRight: () => 8,
+              paddingTop: () => 6,
+              paddingBottom: () => 6,
+            },
+            margin: [0, 0, 0, 2],
+          })
+        } else if (this.shouldShowNoResponse(item, value, itemPhotos)) {
+          itemContent.push({
+            table: {
+              widths: ["100%"],
+              body: [[{ text: "Aucune Réponse", style: "noResponse" }]],
+            },
+            layout: {
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              paddingLeft: () => 8,
+              paddingRight: () => 8,
+              paddingTop: () => 6,
+              paddingBottom: () => 6,
+            },
+            margin: [0, 0, 0, 2],
           })
         }
 
-        // Ajouter les photos
+        // Commentaire
+        if (value?.comment) {
+          itemContent.push({
+            table: {
+              widths: ["100%"],
+              body: [[{ text: `Commentaire: ${value.comment}`, style: "itemComment" }]],
+            },
+            layout: {
+              fillColor: () => "#fafbfc",
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              paddingLeft: () => 8,
+              paddingRight: () => 8,
+              paddingTop: () => 6,
+              paddingBottom: () => 6,
+            },
+            margin: [0, 0, 0, 2],
+          })
+        }
+
+        // Photos
         if (itemPhotos.length > 0) {
           const photoRows: any[] = []
 
           for (let i = 0; i < itemPhotos.length; i += 2) {
             const row: any[] = []
 
-            // Première photo de la ligne
             if (i < itemPhotos.length && itemPhotos[i].base64Image) {
               const photoCell: any = {
                 stack: [
                   {
                     image: itemPhotos[i].base64Image,
-                    width: 200,
+                    width: 180,
                     alignment: "center",
                   },
                 ],
@@ -356,13 +497,12 @@ export class DetailReportComponent implements OnInit {
               row.push("")
             }
 
-            // Deuxième photo de la ligne
             if (i + 1 < itemPhotos.length && itemPhotos[i + 1].base64Image) {
               const photoCell: any = {
                 stack: [
                   {
                     image: itemPhotos[i + 1].base64Image,
-                    width: 200,
+                    width: 180,
                     alignment: "center",
                   },
                 ],
@@ -385,25 +525,30 @@ export class DetailReportComponent implements OnInit {
           }
 
           if (photoRows.length > 0) {
-            sectionsContent.push({
+            itemContent.push({
               table: {
                 widths: ["50%", "50%"],
                 body: photoRows,
               },
               layout: "noBorders",
-              margin: [0, 10, 0, 15],
+              margin: [0, 5, 0, 0],
             })
           }
-        } else {
-          // Ajouter un peu d'espace si pas de photos
-          sectionsContent.push({ text: "", margin: [0, 0, 0, 10] })
         }
+
+        // Ajouter l'item - SEULEMENT unbreakable si il y a des photos
+        sectionsContent.push({
+          stack: itemContent,
+          unbreakable: itemPhotos.length > 0, // Seulement pour éviter séparation titre/photos
+          margin: [0, 0, 0, 12],
+        })
       }
     }
 
     // Ajouter les sections au document
     docDefinition.content.push(...sectionsContent)
 
-    pdfMake.createPdf(docDefinition).open()
+    // Créer et télécharger le PDF avec le nom du site
+    pdfMake.createPdf(docDefinition).download(fileName + ".pdf")
   }
 }
