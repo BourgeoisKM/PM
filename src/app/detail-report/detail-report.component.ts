@@ -16,6 +16,12 @@ export class DetailReportComponent implements OnInit {
   sections: any[] = []
   isLoading = true
 
+  // Lightbox properties
+  showLightbox = false
+  currentPhoto: any = null
+  currentPhotoIndex = 0
+  currentItemPhotos: any[] = []
+
   constructor(
     private route: ActivatedRoute,
     private dataService: DataService,
@@ -81,6 +87,79 @@ export class DetailReportComponent implements OnInit {
 
     // If no value and no photos, show "Aucune Réponse"
     return true
+  }
+
+  // Lightbox methods
+  openLightbox(photo: any, itemPhotos: any[]): void {
+    this.currentPhoto = photo
+    this.currentItemPhotos = itemPhotos
+    this.currentPhotoIndex = itemPhotos.findIndex((p) => p === photo)
+    this.showLightbox = true
+    document.body.style.overflow = "hidden" // Prevent background scrolling
+  }
+
+  closeLightbox(): void {
+    this.showLightbox = false
+    this.currentPhoto = null
+    this.currentItemPhotos = []
+    this.currentPhotoIndex = 0
+    document.body.style.overflow = "auto" // Restore scrolling
+  }
+
+  previousPhoto(): void {
+    if (this.currentPhotoIndex > 0) {
+      this.currentPhotoIndex--
+      this.currentPhoto = this.currentItemPhotos[this.currentPhotoIndex]
+    }
+  }
+
+  nextPhoto(): void {
+    if (this.currentPhotoIndex < this.currentItemPhotos.length - 1) {
+      this.currentPhotoIndex++
+      this.currentPhoto = this.currentItemPhotos[this.currentPhotoIndex]
+    }
+  }
+
+  downloadPhoto(): void {
+    if (!this.currentPhoto) return
+
+    const imageUrl = this.currentPhoto.url || this.currentPhoto.base64Image
+    if (!imageUrl) return
+
+    // Create a temporary link element
+    const link = document.createElement("a")
+    link.href = imageUrl
+
+    // Generate filename
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-")
+    const siteName = this.rapport.report?.site?.name || "Site"
+    const sanitizedSiteName = siteName.replace(/[^a-zA-Z0-9]/g, "_")
+    const filename = `${sanitizedSiteName}_Photo_${timestamp}.jpg`
+
+    link.download = filename
+    link.target = "_blank"
+
+    // Trigger download
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  // Handle keyboard navigation
+  onKeyDown(event: KeyboardEvent): void {
+    if (!this.showLightbox) return
+
+    switch (event.key) {
+      case "Escape":
+        this.closeLightbox()
+        break
+      case "ArrowLeft":
+        this.previousPhoto()
+        break
+      case "ArrowRight":
+        this.nextPhoto()
+        break
+    }
   }
 
   // Convert image URL to base64

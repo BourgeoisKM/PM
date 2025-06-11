@@ -1,7 +1,7 @@
 <app-header></app-header>
 <app-aside></app-aside>
 
-<main id="main" class="main py-5" style="background-color: #f4f6f9;">
+<main id="main" class="main py-5" style="background-color: #f4f6f9;" (keydown)="onKeyDown($event)">
   <div class="container mt-4">
     <!-- Page Header -->
     <div id="rapportContent">
@@ -245,9 +245,9 @@
                 </div>
                 <div class="row g-3">
                   <ng-container *ngFor="let photo of getItemPhotos(item.id)">
-                    <div class="col-md-4 col-lg-3">
+                    <div class="col-md-6">
                       <div class="photo-container">
-                        <div class="photo-wrapper">
+                        <div class="photo-wrapper" (click)="openLightbox(photo, getItemPhotos(item.id))">
                           <img [src]="photo.url || photo.base64Image" 
                                class="img-fluid rounded shadow-sm img-hover" 
                                [alt]="'Photo ' + item.label" />
@@ -275,6 +275,45 @@
         <div>
           <strong>No sections available</strong><br>
           <small>No sections are available for this report.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div *ngIf="showLightbox" class="lightbox-overlay" (click)="closeLightbox()">
+    <div class="lightbox-container" (click)="$event.stopPropagation()">
+      <!-- Close button -->
+      <button class="lightbox-close" (click)="closeLightbox()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <!-- Navigation buttons -->
+      <button *ngIf="currentPhotoIndex > 0" class="lightbox-nav lightbox-prev" (click)="previousPhoto()">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button *ngIf="currentPhotoIndex < currentItemPhotos.length - 1" class="lightbox-nav lightbox-next" (click)="nextPhoto()">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <!-- Image -->
+      <div class="lightbox-image-container">
+        <img [src]="currentPhoto?.url || currentPhoto?.base64Image" 
+             class="lightbox-image" 
+             [alt]="'Photo ' + currentPhotoIndex" />
+      </div>
+
+      <!-- Controls -->
+      <div class="lightbox-controls">
+        <div class="lightbox-info">
+          <span class="lightbox-counter">{{ currentPhotoIndex + 1 }} / {{ currentItemPhotos.length }}</span>
+          <span *ngIf="currentPhoto?.comment" class="lightbox-comment">{{ currentPhoto.comment }}</span>
+        </div>
+        <div class="lightbox-actions">
+          <button class="btn btn-primary btn-sm me-2" (click)="downloadPhoto()">
+            <i class="bi bi-download me-1"></i>
+            Download
+          </button>
         </div>
       </div>
     </div>
