@@ -102,8 +102,6 @@ export class DataService {
     })
   );
 }
-
-
   getSites(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.baseUrl}/sites`, {
       headers: this.getAuthHeaders()

@@ -17,24 +17,27 @@ import { MonProfilComponent } from './pages/mon-profil/mon-profil.component';
 import { ListFmeComponent } from './pages/list-fme/list-fme.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
+ 
+   { path: 'home', component: HomeComponent, canActivate:[AuthGuard] },
+     
   {
     path: 'user', children: [
       { path: 'list', component: ListComponent },
       { path: 'detail/:id', component: ProfilComponent },
     ], canActivate:[AuthGuard]
   },
-  { path: '', component: LoginComponent },
-  { path: 'abonnement', component: AbonnementComponent},
-  { path: 'suggestion', component: SuggestionComponent},
-  { path: 'detail-abon/:id', component: DetailAbonComponent},
-  { path: 'rapports-recu', component: AllReportsComponent },
-  { path: 'assigned', component: AssignedComponent },
-  { path: 'list-pm', component: PmListComponent },
-  { path: 'rapport/:id', component: DetailReportComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'mon-profil', component: MonProfilComponent },
-  { path: 'fme-list', component: ListFmeComponent },
+  { path: 'auth/login', component: LoginComponent },
+  { path: 'abonnement', component: AbonnementComponent, canActivate:[AuthGuard]},
+  { path: 'suggestion', component: SuggestionComponent, canActivate:[AuthGuard]},
+  { path: 'detail-abon/:id', component: DetailAbonComponent, canActivate:[AuthGuard]},
+  { path: 'rapports-recu', component: AllReportsComponent, canActivate:[AuthGuard] },
+  { path: 'assigned', component: AssignedComponent , canActivate:[AuthGuard]},
+  { path: 'list-pm', component: PmListComponent , canActivate:[AuthGuard]},
+  { path: 'rapport/:id', component: DetailReportComponent, canActivate:[AuthGuard] },
+  { path: 'register', component: RegisterComponent , canActivate:[AuthGuard]},
+  { path: 'mon-profil', component: MonProfilComponent , canActivate:[AuthGuard]},
+  { path: 'fme-list', component: ListFmeComponent , canActivate:[AuthGuard]},
+   { path: '', component: HomeComponent, canActivate:[AuthGuard] },
 
 ];
 
