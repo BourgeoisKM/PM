@@ -12,14 +12,14 @@
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="150" *ngIf="role === 'ops_admin'">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/register">
         <i class="bi bi-person-plus-fill text-success fs-5"></i>
-        <span class="fw-semibold">Créer un utilisateur</span>
+        <span class="fw-semibold">Create a User</span>
       </a>
     </li>
 
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="150" *ngIf="role === 'ops_admin'">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/fme-list">
         <i class="bi bi-people-fill text-success fs-5"></i>
-        <span class="fw-semibold">Tous les FME</span>
+        <span class="fw-semibold">All users</span>
       </a>
     </li>
 
@@ -27,7 +27,7 @@
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="200">
       <a class="nav-link collapsed d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-server text-warning fs-5"></i>
-        <span class="fw-semibold">Base de données</span>
+        <span class="fw-semibold">DataBase</span>
         <i class="bi bi-chevron-down ms-auto fs-6"></i>
       </a>
 
@@ -35,7 +35,7 @@
         <li class="mb-1" data-aos="fade-right" data-aos-delay="300">
           <a class="d-flex align-items-center gap-2 text-decoration-none sidebar-sub-link" routerLink="/user/list">
             <i class="bi bi-dot text-secondary"></i>
-            <span>Liste des sites</span>
+            <span>List of sites</span>
           </a>
         </li>
       </ul>
@@ -45,7 +45,7 @@
     <li *ngIf="role !== 'vendor_admin'" class="nav-item mb-2" data-aos="fade-right" data-aos-delay="350">
   <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/assigned">
     <i class="bi bi-file-earmark-person-fill text-success fs-5"></i>
-    <span class="fw-semibold">Assigner PM</span>
+    <span class="fw-semibold">To schedule a visit</span>
   </a>
 </li>
 
@@ -53,14 +53,14 @@
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="400">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/list-pm">
         <i class="bi bi-calendar-date-fill text-info fs-5"></i>
-        <span class="fw-semibold">PM Planifié</span>
+        <span class="fw-semibold">Visit schedule</span>
       </a>
     </li>
 
     <li class="nav-item mb-2" data-aos="fade-right" data-aos-delay="450">
       <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded sidebar-link" routerLink="/rapports-recu">
         <i class="bi bi-file-earmark-arrow-down-fill text-danger fs-5"></i>
-        <span class="fw-semibold">Rapports reçus</span>
+        <span class="fw-semibold">Repports Received</span>
       </a>
     </li>
 

@@ -32,7 +32,6 @@ export class DataService {
     localStorage.setItem('currentUser', JSON.stringify(userData));
   }
 
-  // Maintenant getCurrentUser() renvoie un Observable<any> pour faciliter l'usage en async
   getCurrentUser(): Observable<any> {
     const userJson = localStorage.getItem('currentUser');
     if (!userJson) {
