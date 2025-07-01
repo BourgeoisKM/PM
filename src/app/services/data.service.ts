@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class DataService {
-  private baseUrl = 'https://pm-backend-3t2n.onrender.com';
+  private baseUrl = 'https://test-backend-pm-7djp.onrender.com';
 
   constructor(private httpClient: HttpClient) {}
 
