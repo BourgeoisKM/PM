@@ -4,98 +4,106 @@
 <main id="main" class="main bg-light p-4">
   <div class="pagetitle mb-4">
     <h1 class="fw-bold text-dark">Dashboard</h1>
+    <p class="text-muted">Global overview of your performance</p>
   </div>
 
-  <section class="section dashboard">
-    <div class="row g-3">
+  <!-- KPI Cards -->
+  <section class="section dashboard mb-5">
+    <div class="row g-4">
 
-      <!-- Our Sites (fixed or to be connected later) -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-circle bg-primary text-white me-3">
+      <div class="col-lg-4 col-md-6">
+        <div class="card text-white bg-gradient-primary shadow-sm border-0 rounded-4 p-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="bi bi-bounding-box fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Our Sites</h6>
-              <h3 class="mb-0 fw-bold text-primary count-up">935</h3>
-              <small class="text-muted">Today</small>
+              <h6 class="text-black-50">Our Sites</h6>
+              <h3 class="mb-0 text-danger bold">{{ totalSites }}</h3>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Assigned Planning -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-circle bg-warning text-white me-3">
+      <div class="col-lg-4 col-md-6">
+        <div class="card text-white bg-gradient-warning shadow-sm border-0 rounded-4 p-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-white text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="bi bi-calendar-date-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Assigned Planning</h6>
-              <h3 class="mb-0 fw-bold text-warning count-up">{{ pmPlanifiees }}</h3>
-              <small class="text-muted">Pending PM</small>
+              <h6 class="text-black-50">Assigned Planning</h6>
+              <h3 class="mb-0 text-warning">{{ pmPlanifiees }}</h3>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Reports Received (Executed PM) -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-circle bg-success text-white me-3">
+      <div class="col-lg-4 col-md-6">
+        <div class="card text-white bg-gradient-success shadow-sm border-0 rounded-4 p-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
               <i class="bi bi-file-earmark-text-fill fs-3"></i>
             </div>
             <div>
-              <h6 class="mb-1 fw-semibold">Reports Received (Executed PM)</h6>
-              <h3 class="mb-0 fw-bold text-success count-up">{{ pmExecutees }}</h3>
-              <small class="text-muted">Validated</small>
+              <h6 class="text-black-50">Reports Received</h6>
+              <!-- <h3 class="mb-0 text-success">{{ pmExecutees }}</h3> -->
+              <h3 class="mb-0 text-success">150</h3>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Delayed PM -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-circle bg-secondary text-white me-3">
-              <i class="bi bi-calendar-x-fill fs-3"></i>
-            </div>
-            <div>
-              <h6 class="mb-1 fw-semibold">Delayed PM</h6>
-              <h3 class="mb-0 fw-bold text-secondary count-up">{{ pmEnRetard }}</h3>
-              <small class="text-muted">Reports</small>
-            </div>
+    </div>
+  </section>
+
+  <!-- Graphs Section -->
+  <section class="section">
+    <h4 class="mb-4 fw-bold text-dark"> Graphical Statistics</h4>
+
+    <div class="row g-4">
+
+      <div class="col-lg-6 col-md-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h6 class="fw-semibold mb-3 text-primary">Sites by Region</h6>
+          <div class="chart-container" style="height: 300px;">
+            <canvas baseChart
+              [datasets]="regionChartData"
+              [labels]="regionChartLabels"
+              [type]="'bar'"
+              [options]="barChartOptions">
+            </canvas>
           </div>
         </div>
       </div>
 
-      <!-- Rejected PM (fixed for now, adapt according to your logic) -->
-      <!-- <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-        <div class="card shadow-sm border-0 rounded-3 hover-shadow p-3">
-          <div class="d-flex align-items-center">
-            <div class="icon-circle bg-danger text-white me-3">
-              <i class="bi bi-exclamation-triangle-fill fs-3"></i>
-            </div>
-            <div>
-              <h6 class="mb-1 fw-semibold">Rejected PM</h6>
-              <h3 class="mb-0 fw-bold text-danger count-up">1</h3>
-              <small class="text-muted">Critical</small>
-            </div>
+      <div class="col-lg-6 col-md-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h6 class="fw-semibold mb-3 text-success">Power Supply Type</h6>
+          <div class="chart-container" style="height: 300px;">
+            <canvas baseChart
+              [datasets]="powerTypeChartData"
+              [labels]="powerTypeChartLabels"
+              [type]="'pie'"
+              [options]="pieChartOptions">
+            </canvas>
           </div>
         </div>
-      </div> -->
+      </div>
 
-      <!-- PM Distribution Chart -->
-      <!-- <div class="col-lg-4" data-aos="fade-up" data-aos-delay="700">
-        <div class="card shadow-sm border-0 rounded-3 p-3">
-          <h5 class="fw-semibold mb-3">PM Distribution (Circular)</h5>
-         
+      <div class="col-lg-6 col-md-12">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h6 class="fw-semibold mb-3 text-warning">Sites by Vendor</h6>
+          <div class="chart-container" style="height: 300px;">
+            <canvas baseChart
+              [datasets]="vendorChartData"
+              [labels]="vendorChartLabels"
+              [type]="'bar'"
+              [options]="barChartOptions">
+            </canvas>
+          </div>
         </div>
-      </div> -->
+      </div>
 
     </div>
   </section>

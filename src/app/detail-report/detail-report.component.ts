@@ -51,6 +51,47 @@ export class DetailReportComponent implements OnInit {
       },
     })
   }
+  isSubmitting = false
+
+updateReportStatus(): void {
+  const reportId = this.rapport.report?.id;
+  const newStatus = this.rapport.report?.status;
+
+  if (!reportId || !newStatus) {
+    alert("Informations du rapport incomplètes.");
+    return;
+  }
+
+  this.isSubmitting = true;
+
+  this.dataService.updateReportStatus(reportId, newStatus).subscribe({
+    next: () => {
+      this.isSubmitting = false;
+      alert("Statut du rapport mis à jour avec succès.");
+    },
+    error: (err) => {
+      console.error("Erreur lors de la mise à jour du statut :", err);
+      this.isSubmitting = false;
+      alert("Échec de la mise à jour du statut.");
+    },
+  });
+}
+
+getStatusBadgeClass(status: string): string {
+  switch (status?.toLowerCase()) {
+    case 'draft':
+      return 'bg-warning text-dark'  // Jaune
+    case 'submitted':
+      return 'bg-success'           // Vert
+    case 'approved':
+      return 'bg-primary'           // Bleu
+    case 'rejected':
+      return 'bg-danger'            // Rouge
+    default:
+      return 'bg-secondary'         // Gris par défaut
+  }
+}
+
 
   // Get the latest value for an item
   getLatestValue(itemId: string): any {

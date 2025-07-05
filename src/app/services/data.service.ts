@@ -136,4 +136,29 @@ export class DataService {
       headers: this.getAuthHeaders()
     });
   }
+  updateReportStatus(reportId: string, status: string) {
+  const token = localStorage.getItem('token'); 
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  });
+
+  return this.httpClient.patch(
+    `${this.baseUrl}/reports/${reportId}/status`,
+    { status },
+    { headers }
+  );
+}
+getStats(): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = token
+    ? new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      })
+    : new HttpHeaders();
+
+  return this.httpClient.get<any>(`${this.baseUrl}/sites/stats`, { headers });
+}
+
 }

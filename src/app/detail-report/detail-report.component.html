@@ -151,15 +151,36 @@
               </div>
             </div>
             <div class="col-lg-4">
-              <div class="info-item-simple">
-                <span class="info-label-simple">
-                  <i class="bi bi-check-circle me-2 text-secondary"></i>
-                  Status:
-                </span>
-                <span class="info-value-simple">
-                  <span class="badge bg-success px-3 py-2 text-uppercase fs-6">{{ rapport.report.status }}</span>
-                </span>
-              </div>
+  <div class="info-item-simple">
+    <label class="info-label-simple d-block mb-2">
+      <i class="bi bi-check-circle me-2 text-secondary"></i>
+      Status:
+    </label>
+    <div class="d-flex align-items-center gap-2">
+      <div class="d-flex align-items-center gap-2">
+  <select class="form-select" [(ngModel)]="rapport.report.status" [disabled]="isSubmitting">
+    <option value="draft">Draft</option>
+    <option value="submitted">Submitted</option>
+    <option value="approved">Approved</option>
+    <option value="rejected">Rejected</option>
+  </select>
+
+  <span class="info-value-simple">
+    <span
+      class="badge px-3 py-2 text-uppercase fs-6"
+      [ngClass]="getStatusBadgeClass(rapport.report.status)"
+    >
+      {{ rapport.report.status }}
+    </span>
+  </span>
+</div>
+      <button class="btn btn-primary" (click)="updateReportStatus()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Validating...' : 'Valider' }}
+       
+      </button>
+    </div>
+  </div>
+</div>
             </div>
           </div>
         </div>
@@ -278,7 +299,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- Lightbox Modal -->
   <div *ngIf="showLightbox" class="lightbox-overlay" (click)="closeLightbox()">

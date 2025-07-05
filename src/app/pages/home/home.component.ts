@@ -15,6 +15,50 @@ interface Report {
   vendorId: string;
 }
 
+interface StatRegion {
+  region: string;
+  count: number;
+}
+
+interface StatPowerConfig {
+  powerConfiguration: string;
+  count: number;
+}
+
+interface StatProvince {
+  province: string;
+  count: number;
+}
+
+interface StatSiteType {
+  siteType: string;
+  count: number;
+}
+
+interface StatVendor {
+  vendorId: string;
+  vendorName: string;
+  count: number;
+}
+
+interface PowerTypes {
+  solar: number;
+  grid: number;
+  hybrid: number;
+  dg: number;
+  battery: number;
+}
+
+interface StatsResponse {
+  total: number;
+  byRegion: StatRegion[];
+  byPowerConfig: StatPowerConfig[];
+  byProvince: StatProvince[];
+  bySiteType: StatSiteType[];
+  byVendor: StatVendor[];
+  powerTypes: PowerTypes;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -28,8 +72,36 @@ export class HomeComponent implements OnInit {
   pmExecutees = 0;
   pmEnRetard = 0;
 
-  pieChartData: any;
-  pieChartLabels = ['Planifiées', 'Exécutées', 'En retard'];
+  totalSites = 0;
+  byRegion: StatRegion[] = [];
+  byVendor: StatVendor[] = [];
+  powerTypes: PowerTypes = { solar: 0, grid: 0, hybrid: 0, dg: 0, battery: 0 };
+
+  // Charts data
+  regionChartLabels: string[] = [];
+  regionChartData: any[] = [];
+
+  powerTypeChartLabels: string[] = ['Solar', 'Grid', 'Hybrid', 'DG', 'Battery'];
+  powerTypeChartData: any[] = [];
+
+  vendorChartLabels: string[] = [];
+  vendorChartData: any[] = [];
+
+  pieChartLabels: string[] = ['Planifiées', 'Exécutées', 'En retard'];
+  pieChartData: number[] = [];
+
+  // Chart options
+  barChartOptions = {
+    responsive: true,
+    scales: {
+      y: { beginAtZero: true }
+    }
+  };
+
+  pieChartOptions = {
+    responsive: true,
+    cutout: '50%'
+  };
 
   constructor(private dataService: DataService) {}
 
@@ -49,79 +121,104 @@ export class HomeComponent implements OnInit {
     });
   }
 
- loadStats(): void {
-  console.log('Chargement des stats, role:', this.role, 'vendorId:', this.vendorId);
+  loadStats(): void {
+    this.dataService.getAssignedPMs().pipe(take(1)).subscribe({
+      next: (assignedPMs) => {
+        const pmsFiltres = this.role === 'vendor_admin'
+          ? assignedPMs.filter(pm => pm.vendorId === this.vendorId)
+          : assignedPMs;
 
-  this.dataService.getAssignedPMs().pipe(take(1)).subscribe({
-    next: (assignedPMs) => {
-      console.log('PM assignées récupérées:', assignedPMs);
+        this.pmPlanifiees = pmsFiltres.length;
 
-      // Filtrer selon rôle
-      const pmsFiltres = this.role === 'vendor_admin'
-        ? assignedPMs.filter(pm => pm.vendorId === this.vendorId)
-        : assignedPMs;
+        this.dataService.getReports().pipe(take(1)).subscribe({
+          next: (reports) => {
+            const rapportsFiltres = this.role === 'vendor_admin'
+              ? reports.filter(r => r.vendorId === this.vendorId)
+              : reports;
 
-      this.pmPlanifiees = pmsFiltres.length;
-      this.pmPlanifiees =assignedPMs.length;
-      console.log('PM planifiées filtrées:', this.pmPlanifiees);
+            let executees = 0;
+            let enRetard = 0;
+            const now = new Date();
 
-      this.dataService.getReports().pipe(take(1)).subscribe({
-        next: (reports) => {
-          this.pmExecutees=reports.length;
-          console.log('Rapports récupérés:', reports);
+            for (const pm of pmsFiltres) {
+              const rapportExiste = rapportsFiltres.some(
+                r => r.siteId === pm.siteId && r.pmType === pm.pmType
+              );
+              const datePlanifiee = new Date(pm.plannedDate);
+              if (isNaN(datePlanifiee.getTime())) continue;
 
-          const rapportsFiltres = this.role === 'vendor_admin'
-            ? reports.filter(r => r.vendorId === this.vendorId)
-            : reports;
-
-          let executees = 0;
-          let enRetard = 0;
-          const now = new Date();
-
-          for (const pm of pmsFiltres) {
-            const rapportExiste = rapportsFiltres.some(
-              r => r.siteId === pm.siteId && r.pmType === pm.pmType
-            );
-            const datePlanifiee = new Date(pm.plannedDate);
-            if (isNaN(datePlanifiee.getTime())) {
-              console.warn('Date planifiée invalide pour PM:', pm);
-              continue;
+              if (rapportExiste) {
+                executees++;
+              } else if (datePlanifiee < now) {
+                enRetard++;
+              }
             }
+            this.pmExecutees = executees;
+            this.pmEnRetard = enRetard;
 
-            if (rapportExiste) {
-              executees++;
-            } else if (datePlanifiee < now) {
-              enRetard++;
-            }
+            this.updatePieChart();
+
+            this.dataService.getStats().pipe(take(1)).subscribe({
+              next: (stats: StatsResponse) => {
+                this.totalSites = stats.total;
+                this.byRegion = stats.byRegion;
+                this.byVendor = stats.byVendor;
+                this.powerTypes = stats.powerTypes;
+                this.updateCharts();
+              },
+              error: (err) => console.error('Erreur récupération stats:', err)
+            });
+          },
+          error: (err) => {
+            console.error('Erreur récupération rapports :', err);
           }
-          executees=reports.length
-          this.pmExecutees = executees;
-          this.pmEnRetard = enRetard;
-         
-          console.log('PM exécutées:', executees, 'PM en retard:', enRetard);
-
-          this.updatePieChart();
-        },
-        error: (err) => {
-          console.error('Erreur récupération rapports :', err);
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Erreur récupération PM assignées :', err);
-    }
-  });
-}
-
+        });
+      },
+      error: (err) => {
+        console.error('Erreur récupération PM assignées :', err);
+      }
+    });
+  }
 
   updatePieChart(): void {
-    this.pieChartData = {
-      labels: this.pieChartLabels,
-      datasets: [{
-        data: [this.pmPlanifiees, this.pmExecutees, this.pmEnRetard],
-        backgroundColor: ['#36A2EB', '#4BC0C0', '#FF6384']
-      }]
-    };
+    this.pieChartData = [
+      this.pmPlanifiees,
+      this.pmExecutees,
+      this.pmEnRetard
+    ];
+  }
+
+  updateCharts(): void {
+    this.regionChartLabels = this.byRegion.map(r => r.region);
+    this.regionChartData = [
+      {
+        data: this.byRegion.map(r => r.count),
+        label: 'Sites par Région',
+        backgroundColor: '#42A5F5'
+      }
+    ];
+
+    this.powerTypeChartData = [
+      {
+        data: [
+          this.powerTypes.solar,
+          this.powerTypes.grid,
+          this.powerTypes.hybrid,
+          this.powerTypes.dg,
+          this.powerTypes.battery
+        ],
+        backgroundColor: ['#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF6384']
+      }
+    ];
+
+    this.vendorChartLabels = this.byVendor.map(v => v.vendorName);
+    this.vendorChartData = [
+      {
+        data: this.byVendor.map(v => v.count),
+        label: 'Sites par Vendor',
+        backgroundColor: '#FFA726'
+      }
+    ];
   }
 
   setupThemeToggle(): void {

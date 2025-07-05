@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
       'Authorization': `Bearer ${token}`
     });
 
-    this.http.get<any>('https://pm-backend-3t2n.onrender.com/auth/me', { headers }).subscribe({
+    this.http.get<any>('https://pmapi.cd-ecinfras.com/auth/me', { headers }).subscribe({
       next: (data) => {
         this.nom = data?.fullName || 'Utilisateur';
         this.path = data?.photo || 'assets/img/default-profile.png';

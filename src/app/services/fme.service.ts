@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class FmeService {
 
-  private apiUrl = 'https://pm-backend-3t2n.onrender.com/users'; 
+  private apiUrl = 'https://pmapi.cd-ecinfras.com/users'; 
 
   constructor(private http: HttpClient) {}
 
