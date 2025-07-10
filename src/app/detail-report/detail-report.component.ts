@@ -1,6 +1,6 @@
 import { Component, type OnInit } from "@angular/core"
-import  { ActivatedRoute } from "@angular/router"
-import  { DataService } from "src/app/services/data.service"
+import { ActivatedRoute } from "@angular/router"
+import { DataService } from "src/app/services/data.service"
 import * as pdfMake from "pdfmake/build/pdfmake"
 import * as pdfFonts from "pdfmake/build/vfs_fonts"
 ;(pdfMake as any).vfs = (pdfFonts as any).vfs
@@ -21,6 +21,17 @@ export class DetailReportComponent implements OnInit {
   currentPhoto: any = null
   currentPhotoIndex = 0
   currentItemPhotos: any[] = []
+
+  // Zoom properties
+  zoomLevel = 1
+  minZoom = 0.5
+  maxZoom = 3
+  panX = 0
+  panY = 0
+  isDragging = false
+  lastMouseX = 0
+  lastMouseY = 0
+  Math = Math // Pour utiliser Math dans le template
 
   constructor(
     private route: ActivatedRoute,
@@ -139,7 +150,9 @@ export class DetailReportComponent implements OnInit {
     this.currentItemPhotos = itemPhotos
     this.currentPhotoIndex = itemPhotos.findIndex((p) => p === photo)
     this.showLightbox = true
-    document.body.style.overflow = "hidden" // Prevent background scrolling
+    // Reset zoom when opening lightbox
+    this.resetZoom()
+    document.body.style.overflow = "hidden"
   }
 
   closeLightbox(): void {
@@ -154,6 +167,7 @@ export class DetailReportComponent implements OnInit {
     if (this.currentPhotoIndex > 0) {
       this.currentPhotoIndex--
       this.currentPhoto = this.currentItemPhotos[this.currentPhotoIndex]
+      this.resetZoom() // Reset zoom when changing photo
     }
   }
 
@@ -161,7 +175,72 @@ export class DetailReportComponent implements OnInit {
     if (this.currentPhotoIndex < this.currentItemPhotos.length - 1) {
       this.currentPhotoIndex++
       this.currentPhoto = this.currentItemPhotos[this.currentPhotoIndex]
+      this.resetZoom() // Reset zoom when changing photo
     }
+  }
+
+  // Zoom methods
+  zoomIn(): void {
+    if (this.zoomLevel < this.maxZoom) {
+      this.zoomLevel = Math.min(this.zoomLevel + 0.25, this.maxZoom)
+    }
+  }
+
+  zoomOut(): void {
+    if (this.zoomLevel > this.minZoom) {
+      this.zoomLevel = Math.max(this.zoomLevel - 0.25, this.minZoom)
+      // Reset pan if zoom is back to 1 or less
+      if (this.zoomLevel <= 1) {
+        this.panX = 0
+        this.panY = 0
+      }
+    }
+  }
+
+  resetZoom(): void {
+    this.zoomLevel = 1
+    this.panX = 0
+    this.panY = 0
+  }
+
+  onWheel(event: WheelEvent): void {
+    event.preventDefault()
+
+    if (event.deltaY < 0) {
+      this.zoomIn()
+    } else {
+      this.zoomOut()
+    }
+  }
+
+  startDrag(event: MouseEvent): void {
+    if (this.zoomLevel > 1) {
+      this.isDragging = true
+      this.lastMouseX = event.clientX
+      this.lastMouseY = event.clientY
+      event.preventDefault()
+    }
+  }
+
+  onDrag(event: MouseEvent): void {
+    if (this.isDragging && this.zoomLevel > 1) {
+      const deltaX = event.clientX - this.lastMouseX
+      const deltaY = event.clientY - this.lastMouseY
+
+      this.panX += deltaX
+      this.panY += deltaY
+
+      this.lastMouseX = event.clientX
+      this.lastMouseY = event.clientY
+    }
+  }
+
+  endDrag(): void {
+    this.isDragging = false
+  }
+
+  getImageTransform(): string {
+    return `scale(${this.zoomLevel}) translate(${this.panX / this.zoomLevel}px, ${this.panY / this.zoomLevel}px)`
   }
 
   downloadPhoto(): void {

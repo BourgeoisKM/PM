@@ -303,42 +303,76 @@
   <!-- Lightbox Modal -->
   <div *ngIf="showLightbox" class="lightbox-overlay" (click)="closeLightbox()">
     <div class="lightbox-container" (click)="$event.stopPropagation()">
-      <!-- Close button -->
-      <button class="lightbox-close" (click)="closeLightbox()">
-        <i class="bi bi-x-lg"></i>
-      </button>
-
-      <!-- Navigation buttons -->
-      <button *ngIf="currentPhotoIndex > 0" class="lightbox-nav lightbox-prev" (click)="previousPhoto()">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <button *ngIf="currentPhotoIndex < currentItemPhotos.length - 1" class="lightbox-nav lightbox-next" (click)="nextPhoto()">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-
-      <!-- Image -->
-      <div class="lightbox-image-container">
-        <img [src]="currentPhoto?.url || currentPhoto?.base64Image" 
-             class="lightbox-image" 
-             [alt]="'Photo ' + currentPhotoIndex" />
+    
+    <!-- Header avec tous les contrôles -->
+    <div class="lightbox-header">
+      <!-- Navigation gauche -->
+      <div class="lightbox-header-left">
+        <button *ngIf="currentPhotoIndex > 0" class="lightbox-control-btn" (click)="previousPhoto()" title="Previous photo">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <div *ngIf="currentPhotoIndex === 0" class="lightbox-control-btn-placeholder"></div>
       </div>
 
-      <!-- Controls -->
-      <div class="lightbox-controls">
-        <div class="lightbox-info">
-          <span class="lightbox-counter">{{ currentPhotoIndex + 1 }} / {{ currentItemPhotos.length }}</span>
-          <span *ngIf="currentPhoto?.comment" class="lightbox-comment">{{ currentPhoto.comment }}</span>
-        </div>
-        <div class="lightbox-actions">
-          <button class="btn btn-primary btn-sm me-2" (click)="downloadPhoto()">
-            <i class="bi bi-download me-1"></i>
-            Download
+      <!-- Contrôles de zoom au centre -->
+      <div class="lightbox-header-center">
+        <div class="zoom-controls">
+          <button class="zoom-btn" (click)="zoomOut()" [disabled]="zoomLevel <= minZoom" title="Zoom out">
+            <i class="bi bi-zoom-out"></i>
+          </button>
+          <span class="zoom-level">{{ Math.round(zoomLevel * 100) }}%</span>
+          <button class="zoom-btn" (click)="zoomIn()" [disabled]="zoomLevel >= maxZoom" title="Zoom in">
+            <i class="bi bi-zoom-in"></i>
+          </button>
+          <button class="zoom-btn" (click)="resetZoom()" title="Reset zoom">
+            <i class="bi bi-arrow-clockwise"></i>
           </button>
         </div>
+      </div>
+
+      <!-- Navigation droite et fermeture -->
+      <div class="lightbox-header-right">
+        <button *ngIf="currentPhotoIndex < currentItemPhotos.length - 1" class="lightbox-control-btn" (click)="nextPhoto()" title="Next photo">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <div *ngIf="currentPhotoIndex >= currentItemPhotos.length - 1" class="lightbox-control-btn-placeholder"></div>
+        <button class="lightbox-close" (click)="closeLightbox()" title="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Image container avec zoom -->
+    <div class="lightbox-image-container" 
+         (wheel)="onWheel($event)"
+         (mousedown)="startDrag($event)"
+         (mousemove)="onDrag($event)"
+         (mouseup)="endDrag()"
+         (mouseleave)="endDrag()">
+      <img [src]="currentPhoto?.url || currentPhoto?.base64Image" 
+           class="lightbox-image" 
+           [style.transform]="getImageTransform()"
+           [style.cursor]="zoomLevel > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'"
+           [alt]="'Photo ' + currentPhotoIndex"
+           (dragstart)="$event.preventDefault()" />
+    </div>
+
+    <!-- Footer avec infos et actions -->
+    <div class="lightbox-footer">
+      <div class="lightbox-info">
+        <span class="lightbox-counter">{{ currentPhotoIndex + 1 }} / {{ currentItemPhotos.length }}</span>
+        <span *ngIf="currentPhoto?.comment" class="lightbox-comment">{{ currentPhoto.comment }}</span>
+      </div>
+      <div class="lightbox-actions">
+        <button class="btn btn-primary btn-sm" (click)="downloadPhoto()">
+          <i class="bi bi-download me-1"></i>
+          Download
+        </button>
       </div>
     </div>
   </div>
 </div>
+  </div>
 </main>
 
 <app-footer></app-footer>
