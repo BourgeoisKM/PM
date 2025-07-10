@@ -1,6 +1,6 @@
 import { Component, type OnInit } from "@angular/core"
-import { ActivatedRoute } from "@angular/router"
-import { DataService } from "src/app/services/data.service"
+import  { ActivatedRoute } from "@angular/router"
+import  { DataService } from "src/app/services/data.service"
 import * as pdfMake from "pdfmake/build/pdfmake"
 import * as pdfFonts from "pdfmake/build/vfs_fonts"
 ;(pdfMake as any).vfs = (pdfFonts as any).vfs
@@ -53,45 +53,48 @@ export class DetailReportComponent implements OnInit {
   }
   isSubmitting = false
 
-updateReportStatus(): void {
-  const reportId = this.rapport.report?.id;
-  const newStatus = this.rapport.report?.status;
+  updateReportStatus(): void {
+    const reportId = this.rapport.report?.id
+    const newStatus = this.rapport.report?.status
 
-  if (!reportId || !newStatus) {
-    alert("Informations du rapport incomplètes.");
-    return;
+    if (!reportId || !newStatus) {
+      alert("Report information incomplete.")
+      return
+    }
+
+    this.isSubmitting = true
+
+    this.dataService.updateReportStatus(reportId, newStatus).subscribe({
+      next: (response: any) => {
+        this.isSubmitting = false
+        // Update local data with response
+        if (response?.report) {
+          this.rapport.report = { ...this.rapport.report, ...response.report }
+        }
+        alert(`Report status successfully updated to: ${newStatus.toUpperCase()}`)
+      },
+      error: (err: any) => {
+        console.error("Error updating report status:", err)
+        this.isSubmitting = false
+        alert("Failed to update report status. Please try again.")
+      },
+    })
   }
 
-  this.isSubmitting = true;
-
-  this.dataService.updateReportStatus(reportId, newStatus).subscribe({
-    next: () => {
-      this.isSubmitting = false;
-      alert("Statut du rapport mis à jour avec succès.");
-    },
-    error: (err) => {
-      console.error("Erreur lors de la mise à jour du statut :", err);
-      this.isSubmitting = false;
-      alert("Échec de la mise à jour du statut.");
-    },
-  });
-}
-
-getStatusBadgeClass(status: string): string {
-  switch (status?.toLowerCase()) {
-    case 'draft':
-      return 'bg-warning text-dark'  // Jaune
-    case 'submitted':
-      return 'bg-success'           // Vert
-    case 'approved':
-      return 'bg-primary'           // Bleu
-    case 'rejected':
-      return 'bg-danger'            // Rouge
-    default:
-      return 'bg-secondary'         // Gris par défaut
+  getStatusBadgeClass(status: string): string {
+    switch (status?.toLowerCase()) {
+      case "draft":
+        return "bg-warning text-dark" // Jaune
+      case "submitted":
+        return "bg-success" // Vert
+      case "approved":
+        return "bg-primary" // Bleu
+      case "rejected":
+        return "bg-danger" // Rouge
+      default:
+        return "bg-secondary" // Gris par défaut
+    }
   }
-}
-
 
   // Get the latest value for an item
   getLatestValue(itemId: string): any {
@@ -167,23 +170,48 @@ getStatusBadgeClass(status: string): string {
     const imageUrl = this.currentPhoto.url || this.currentPhoto.base64Image
     if (!imageUrl) return
 
-    // Create a temporary link element
-    const link = document.createElement("a")
-    link.href = imageUrl
-
-    // Generate filename
+    // Generate filename with site name and siteId
     const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-")
     const siteName = this.rapport.report?.site?.name || "Site"
+    const siteId = this.rapport.report?.site?.siteId || "Unknown"
     const sanitizedSiteName = siteName.replace(/[^a-zA-Z0-9]/g, "_")
-    const filename = `${sanitizedSiteName}_Photo_${timestamp}.jpg`
+    const filename = `${sanitizedSiteName}_${siteId}_Photo_${timestamp}.jpg`
 
-    link.download = filename
-    link.target = "_blank"
+    // For base64 images, create blob and download
+    if (imageUrl.startsWith("data:")) {
+      const link = document.createElement("a")
+      link.href = imageUrl
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      return
+    }
 
-    // Trigger download
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    // For URL images, fetch and download
+    fetch(imageUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(url)
+      })
+      .catch((error) => {
+        console.error("Erreur lors du téléchargement:", error)
+        // Fallback: try direct download
+        const link = document.createElement("a")
+        link.href = imageUrl
+        link.download = filename
+        link.target = "_blank"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
   }
 
   // Handle keyboard navigation

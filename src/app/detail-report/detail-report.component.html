@@ -49,6 +49,15 @@
             <div class="col-lg-6">
               <div class="info-item-simple">
                 <span class="info-label-simple">
+                  <i class="bi bi-hash me-2 text-primary"></i>
+                  Site ID:
+                </span>
+                <span class="info-value-simple">{{ rapport.report.site.siteId }}</span>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="info-item-simple">
+                <span class="info-label-simple">
                   <i class="bi bi-map me-2 text-primary"></i>
                   Region / Province:
                 </span>
@@ -150,37 +159,31 @@
                 <span class="info-value-simple">{{ rapport.report.pmType }}</span>
               </div>
             </div>
-            <div class="col-lg-4">
-  <div class="info-item-simple">
-    <label class="info-label-simple d-block mb-2">
-      <i class="bi bi-check-circle me-2 text-secondary"></i>
-      Status:
-    </label>
-    <div class="d-flex align-items-center gap-2">
-      <div class="d-flex align-items-center gap-2">
-  <select class="form-select" [(ngModel)]="rapport.report.status" [disabled]="isSubmitting">
-    <option value="draft">Draft</option>
-    <option value="submitted">Submitted</option>
-    <option value="approved">Approved</option>
-    <option value="rejected">Rejected</option>
-  </select>
-
-  <span class="info-value-simple">
-    <span
-      class="badge px-3 py-2 text-uppercase fs-6"
-      [ngClass]="getStatusBadgeClass(rapport.report.status)"
-    >
-      {{ rapport.report.status }}
-    </span>
-  </span>
-</div>
-      <button class="btn btn-primary" (click)="updateReportStatus()" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Validating...' : 'Valider' }}
-       
-      </button>
-    </div>
-  </div>
-</div>
+            <div class="col-lg-8">
+              <div class="info-item-simple">
+                <span class="info-label-simple d-block mb-2">
+                  <i class="bi bi-check-circle me-2 text-secondary"></i>
+                  Status:
+                </span>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                  <select class="form-select" style="width: auto; min-width: 150px;" [(ngModel)]="rapport.report.status" [disabled]="isSubmitting">
+                    <option value="draft">Draft</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                  
+                  <span class="badge px-3 py-2 text-uppercase fs-6" [ngClass]="getStatusBadgeClass(rapport.report.status)">
+                    {{ rapport.report.status }}
+                  </span>
+                  
+                  <button class="btn btn-primary btn-sm" (click)="updateReportStatus()" [disabled]="isSubmitting">
+                    <i class="bi bi-check-lg me-1" *ngIf="!isSubmitting"></i>
+                    <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting"></span>
+                    {{ isSubmitting ? 'Updating...' : 'Update Status' }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -259,22 +262,19 @@
               <!-- Images -->
               <div *ngIf="getItemPhotos(item.id).length > 0" class="photos-section mt-4">
                 <div class="photos-header mb-3">
-                  <h6 class="mb-0 text-muted">
+                  <h6 class="mb-0 text-muted fw-semibold">
                     <i class="bi bi-images me-2"></i>
                     Photos ({{ getItemPhotos(item.id).length }})
                   </h6>
                 </div>
                 <div class="row g-3">
                   <ng-container *ngFor="let photo of getItemPhotos(item.id)">
-                    <div class="col-md-6">
+                    <div class="col-lg-4 col-md-6">
                       <div class="photo-container">
                         <div class="photo-wrapper" (click)="openLightbox(photo, getItemPhotos(item.id))">
                           <img [src]="photo.url || photo.base64Image" 
-                               class="img-fluid rounded shadow-sm img-hover" 
+                               class="img-fluid rounded shadow-sm photo-thumbnail" 
                                [alt]="'Photo ' + item.label" />
-                          <div class="photo-overlay">
-                            <i class="bi bi-zoom-in text-white"></i>
-                          </div>
                         </div>
                         <small *ngIf="photo.comment" class="photo-comment mt-2 d-block text-center">
                           <i class="bi bi-chat-square-quote me-1"></i>
@@ -338,6 +338,7 @@
       </div>
     </div>
   </div>
+</div>
 </main>
 
 <app-footer></app-footer>

@@ -8,8 +8,8 @@
 /* Simplified info display styling - No table-like layout */
 .info-item-simple {
   display: block;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .info-item-simple:last-child {
@@ -21,12 +21,14 @@
   color: #495057;
   display: inline;
   margin-right: 8px;
+  font-size: 0.95rem;
 }
 
 .info-value-simple {
   color: #212529;
   font-weight: 500;
   display: inline;
+  font-size: 0.95rem;
 }
 
 /* Keep original info styling for sections */
@@ -134,7 +136,7 @@
   align-items: center;
 }
 
-/* Enhanced photo styling - Natural size, larger width */
+/* Enhanced photo styling - Fixed height for consistency */
 .photos-section {
   padding: 20px;
   background-color: #f8f9fa;
@@ -147,9 +149,19 @@
   border-bottom: 2px solid #dee2e6;
 }
 
+/* Photo thumbnail styling - Natural height, full width */
+.photo-thumbnail {
+  width: 100%;
+  height: auto; /* Hauteur naturelle de l'image */
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced photo container */
 .photo-container {
   position: relative;
   margin-bottom: 15px;
+  height: fit-content;
 }
 
 .photo-wrapper {
@@ -159,40 +171,18 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+  height: fit-content;
 }
 
 .photo-wrapper:hover {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  transform: scale(1.02);
+  transform: translateY(-2px);
 }
 
 .photo-wrapper img {
   width: 100%;
-  /* Natural aspect ratio - no fixed height */
-  object-fit: cover;
+  height: auto; /* Hauteur naturelle au lieu de object-fit: cover */
   transition: all 0.3s ease;
-}
-
-.photo-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.photo-wrapper:hover .photo-overlay {
-  opacity: 1;
-}
-
-.photo-overlay i {
-  font-size: 2rem;
 }
 
 .photo-comment {
@@ -282,12 +272,12 @@
   align-items: center;
   justify-content: center;
   max-width: 100%;
-  max-height: calc(90vh - 100px);
+  max-height: none; /* Supprime la contrainte de hauteur */
 }
 
 .lightbox-image {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 90vw; /* Limite la largeur à 90% de la largeur de l'écran */
+  height: auto; /* Hauteur naturelle de l'image */
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -373,11 +363,22 @@
   border-radius: 15px;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Professional spacing */
+.card-body {
+  padding: 2rem;
 }
 
 .card-header {
+  padding: 1.5rem 2rem;
   border-bottom: none;
-  background: linear-gradient(135deg, var(--bs-primary), var(--bs-primary-dark, #0056b3)) !important;
 }
 
 .card-header.bg-secondary {
@@ -398,18 +399,36 @@
   gap: 5px;
 }
 
+/* Enhanced buttons */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 8px;
+}
+
+.form-select {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
 /* Responsive improvements */
+@media (max-width: 992px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-header {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .info-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .info-label {
-    min-width: auto;
-    margin-bottom: 5px;
-  }
-
   .info-item-simple {
     padding: 10px 0;
   }
@@ -417,10 +436,20 @@
   .info-label-simple {
     display: block;
     margin-bottom: 5px;
+    font-size: 0.9rem;
   }
 
   .info-value-simple {
     display: block;
+    font-size: 0.9rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem;
   }
 
   /* Lightbox responsive */
