@@ -1,6 +1,7 @@
 import { Component, type OnInit } from "@angular/core"
-import { ActivatedRoute } from "@angular/router"
-import { DataService } from "src/app/services/data.service"
+import  { ActivatedRoute } from "@angular/router"
+import  { Location } from "@angular/common"
+import  { DataService } from "src/app/services/data.service"
 import * as pdfMake from "pdfmake/build/pdfmake"
 import * as pdfFonts from "pdfmake/build/vfs_fonts"
 ;(pdfMake as any).vfs = (pdfFonts as any).vfs
@@ -36,6 +37,7 @@ export class DetailReportComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private dataService: DataService,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
@@ -777,5 +779,9 @@ export class DetailReportComponent implements OnInit {
 
     // Créer et télécharger le PDF avec le nom du site
     pdfMake.createPdf(docDefinition).download(fileName + ".pdf")
+  }
+
+  goBack(): void {
+    this.location.back()
   }
 }

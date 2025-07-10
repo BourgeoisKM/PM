@@ -77,30 +77,31 @@ export class DataService {
 
   // Vendors filtrés selon l'utilisateur connecté, en Observable
   getVendors(): Observable<any[]> {
-  const allVendors = [
-    { id: 'fe2f623f-1900-431f-8684-7659e180a207', name: 'NETIS' },
-    { id: 'fe85da04-2d40-40eb-86f5-682fde6f9573', name: 'NOVACOM' },
-    { id: '8014a694-842d-48fd-9c4d-dc32cf15fb93', name: 'GLOBAL TECH' },
-    { id: 'c257ad68-2390-425a-9946-f800c48fe8c4', name: 'GEEK' },
-    { id: '3aed5813-e6a8-4670-b1f0-775aa4fbe9be', name: 'East Castle' }
-  ];
+    const allVendors = [
+      { id: 'fe2f623f-1900-431f-8684-7659e180a207', name: 'NETIS' },
+      { id: 'fe85da04-2d40-40eb-86f5-682fde6f9573', name: 'NOVACOM' },
+      { id: '8014a694-842d-48fd-9c4d-dc32cf15fb93', name: 'GLOBAL TECH' },
+      { id: 'c257ad68-2390-425a-9946-f800c48fe8c4', name: 'GEEK' },
+      { id: '3aed5813-e6a8-4670-b1f0-775aa4fbe9be', name: 'East Castle' }
+    ];
 
-  return this.getCurrentUser().pipe(
-    map(user => {
-      // Si admin => retourne tout
-      if (user?.role === 'ops_admin') {
-        return allVendors;
-      }
+    return this.getCurrentUser().pipe(
+      map(user => {
+        // Si admin => retourne tout
+        if (user?.role === 'ops_admin') {
+          return allVendors;
+        }
 
-      // Sinon, filtre selon vendorId
-      if (user?.vendorId) {
-        return allVendors.filter(vendor => vendor.id === user.vendorId);
-      }
+        // Sinon, filtre selon vendorId
+        if (user?.vendorId) {
+          return allVendors.filter(vendor => vendor.id === user.vendorId);
+        }
 
-      return [];
-    })
-  );
-}
+        return [];
+      })
+    );
+  }
+
   getSites(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.baseUrl}/sites`, {
       headers: this.getAuthHeaders()
@@ -136,29 +137,30 @@ export class DataService {
       headers: this.getAuthHeaders()
     });
   }
+
   updateReportStatus(reportId: string, status: string) {
-  const token = localStorage.getItem('token'); 
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  });
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
 
-  return this.httpClient.patch(
-    `${this.baseUrl}/reports/${reportId}/status`,
-    { status },
-    { headers }
-  );
-}
-getStats(): Observable<any> {
-  const token = localStorage.getItem('token');
-  const headers = token
-    ? new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      })
-    : new HttpHeaders();
+    return this.httpClient.patch(
+      `${this.baseUrl}/reports/${reportId}/status`,
+      { status },
+      { headers }
+    );
+  }
 
-  return this.httpClient.get<any>(`${this.baseUrl}/sites/stats`, { headers });
-}
+  getStats(): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = token
+      ? new HttpHeaders({
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        })
+      : new HttpHeaders();
 
+    return this.httpClient.get<any>(`${this.baseUrl}/sites/stats`, { headers });
+  }
 }

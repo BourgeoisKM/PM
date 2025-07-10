@@ -75,6 +75,18 @@
     <!-- Filters Row -->
     <div class="filters-container">
       <div class="row g-3 align-items-end">
+        <div class="col-md-2">
+          <label for="statusFilter" class="form-label">
+            <i class="bi bi-flag me-1"></i> Status
+          </label>
+          <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyStatusFilter()" class="form-control modern-input">
+            <option value="">All Status</option>
+            <option value="draft">Draft</option>
+            <option value="submitted">Submitted</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
         <div class="col-md-3">
           <label for="startDate" class="form-label">
             <i class="bi bi-calendar-event me-1"></i> Start Date
@@ -134,17 +146,15 @@
             <th><i class="bi bi-geo-alt me-1"></i> Province</th>
             <th><i class="bi bi-briefcase me-1"></i> Company</th>
             <th><i class="bi bi-person me-1"></i> Agent</th>
-            <th><i class="bi bi-calendar-event me-1"></i> Planned Date</th>
-            <th><i class="bi bi-calendar-check me-1"></i> Actual Date</th>
             <th><i class="bi bi-flag me-1"></i> Status</th>
-            <th><i class="bi bi-check-circle me-1"></i> Submitted</th>
             <th><i class="bi bi-gear me-1"></i> Action</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let report of pagedReports; let i = index" 
-              class="table-row" 
-              [style.animation-delay]="(i * 0.05) + 's'">
+              class="table-row clickable-row" 
+              [style.animation-delay]="(i * 0.05) + 's'"
+              (click)="voirRapport(report)">
             <td class="site-name">
               <div class="site-info">
                 <strong>{{ report.report?.site?.name || 'N/A' }}</strong>
@@ -157,32 +167,11 @@
             </td>
             <td>{{ report.report?.fme?.fullName || report.report?.fmeName || 'N/A' }}</td>
             <td>
-              <span class="date-badge">
-                {{ report.report?.pmPlannedDate | date: 'dd/MM/yyyy' }}
-              </span>
-            </td>
-            <td>
-              <span class="date-badge" *ngIf="report.report?.pmActualDate">
-                {{ report.report?.pmActualDate | date: 'dd/MM/yyyy' }}
-              </span>
-              <span class="text-muted" *ngIf="!report.report?.pmActualDate">N/A</span>
-            </td>
-            <td>
               <span [ngClass]="getStatusBadgeClass(report.report?.status)">
                 {{ report.report?.status || 'N/A' }}
               </span>
             </td>
-            <td>
-              <div class="submission-status">
-                <i class="bi" 
-                   [ngClass]="report.report?.isSubmitted ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger'">
-                </i>
-                <span [ngClass]="report.report?.isSubmitted ? 'text-success' : 'text-danger'">
-                  {{ report.report?.isSubmitted ? 'Yes' : 'No' }}
-                </span>
-              </div>
-            </td>
-            <td>
+            <td (click)="$event.stopPropagation()">
               <button
                 class="btn btn-action"
                 (click)="voirRapport(report)"
@@ -195,7 +184,7 @@
           
           <!-- Empty State -->
           <tr *ngIf="pagedReports.length === 0" class="empty-row">
-            <td colspan="9" class="text-center py-5">
+            <td colspan="6" class="text-center py-5">
               <div class="empty-state">
                 <i class="bi bi-inbox display-1 text-muted mb-3"></i>
                 <h5 class="text-muted">No reports found</h5>

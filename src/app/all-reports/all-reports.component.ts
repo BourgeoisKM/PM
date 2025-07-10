@@ -61,7 +61,7 @@ export class AllReportsComponent implements OnInit {
   allReportsBackup: Report[] = []
   pagedReports: Report[] = []
   currentPage = 1
-  itemsPerPage = 100 // Augmenté à 100
+  itemsPerPage = 50 // Réduit à 50 comme demandé
   totalPages = 0
   totalItems = 0
   loading = true
@@ -79,6 +79,7 @@ export class AllReportsComponent implements OnInit {
   private cacheKey = "reports_cache"
   private cacheTimestamp = "reports_cache_timestamp"
   private cacheExpiry = 5 * 60 * 1000 // 5 minutes en millisecondes
+  statusFilter = "" // Nouveau filtre par status
 
   constructor(
     private data: DataService,
@@ -229,6 +230,7 @@ export class AllReportsComponent implements OnInit {
     this.filterStartDate = null
     this.filterEndDate = null
     this.searchTerm = ""
+    this.statusFilter = ""
     this.reports = [...this.allReportsBackup]
     this.currentPage = 1
     this.calculateTotalPages()
@@ -251,8 +253,15 @@ export class AllReportsComponent implements OnInit {
       const siteName = report.report?.site?.name?.toLowerCase() || ""
       const vendorName = this.getVendorName(report).toLowerCase()
       const fmeName = (report.report?.fme?.fullName || report.report?.fmeName || "").toLowerCase()
+      const status = (report.report?.status || "").toLowerCase()
 
-      return siteName.includes(term) || vendorName.includes(term) || fmeName.includes(term)
+      // Filtrage par terme de recherche
+      const matchesSearch = siteName.includes(term) || vendorName.includes(term) || fmeName.includes(term)
+
+      // Filtrage par status
+      const matchesStatus = !this.statusFilter || status === this.statusFilter.toLowerCase()
+
+      return matchesSearch && matchesStatus
     })
 
     this.currentPage = 1
@@ -677,5 +686,9 @@ export class AllReportsComponent implements OnInit {
     localStorage.removeItem(this.cacheKey)
     localStorage.removeItem(this.cacheTimestamp)
     this.loadReportsProgressively()
+  }
+
+  applyStatusFilter(): void {
+    this.applySearch() // Réutilise la logique de recherche
   }
 }
