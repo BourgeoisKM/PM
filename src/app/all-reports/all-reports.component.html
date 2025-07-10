@@ -1,10 +1,10 @@
 <app-header></app-header>
 <app-aside></app-aside>
 
-<main id="main" class="main modern-reports-page" data-aos="fade-in" data-aos-duration="700">
+<main id="main" class="main reports-page">
   
   <!-- Hero Section -->
-  <div class="hero-section mb-5" data-aos="fade-down" data-aos-duration="800">
+  <div class="hero-section mb-4">
     <div class="hero-content">
       <div class="hero-text">
         <h1 class="hero-title">
@@ -30,24 +30,25 @@
 
   <!-- Loading Spinner for Initial Load -->
   <div *ngIf="initialLoading && showSkeleton" class="loading-container">
-    <div class="modern-spinner">
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
+    <div class="spinner">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
     <p class="loading-text">Loading reports...</p>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error" class="alert alert-danger modern-alert" data-aos="fade-up">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
     <i class="bi bi-exclamation-triangle-fill me-2"></i>
     <span>{{ error }}</span>
   </div>
 
   <!-- Controls Section -->
-  <div *ngIf="!initialLoading" class="controls-section mb-4" data-aos="fade-up">
+  <div *ngIf="!initialLoading" class="controls-section mb-4">
+    
     <!-- Search and Export Row -->
-    <div class="row mb-4">
+    <div class="row mb-3">
       <div class="col-lg-6">
         <div class="search-container">
           <i class="bi bi-search search-icon"></i>
@@ -64,9 +65,15 @@
         </div>
       </div>
       <div class="col-lg-6 text-end">
-        <button (click)="exportExcel()" [disabled]="excelLoading" class="btn btn-export">
+        <button 
+          (click)="exportExcel()" 
+          [disabled]="!isExcelReady || excelLoading" 
+          class="btn btn-success"
+          [title]="!isExcelReady ? 'Excel data is loading in background...' : 'Export to Excel'"
+        >
           <i class="bi bi-file-earmark-excel me-2"></i>
-          {{ excelLoading ? 'Préparation...' : 'Export Excel' }}
+          {{ excelButtonText }}
+          <span *ngIf="detailedReportsLoading" class="spinner-border spinner-border-sm ms-2" role="status"></span>
         </button>
       </div>
     </div>
@@ -78,7 +85,7 @@
           <label for="statusFilter" class="form-label">
             <i class="bi bi-flag me-1"></i> Status
           </label>
-          <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyStatusFilter()" class="form-control modern-input">
+          <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyStatusFilter()" class="form-control">
             <option value="">All Status</option>
             <option value="draft">Draft</option>
             <option value="submitted">Submitted</option>
@@ -90,21 +97,21 @@
           <label for="startDate" class="form-label">
             <i class="bi bi-calendar-event me-1"></i> Start Date
           </label>
-          <input type="date" id="startDate" [(ngModel)]="filterStartDate" class="form-control modern-input" />
+          <input type="date" id="startDate" [(ngModel)]="filterStartDate" class="form-control" />
         </div>
         <div class="col-md-3">
           <label for="endDate" class="form-label">
             <i class="bi bi-calendar-event me-1"></i> End Date
           </label>
-          <input type="date" id="endDate" [(ngModel)]="filterEndDate" class="form-control modern-input" />
+          <input type="date" id="endDate" [(ngModel)]="filterEndDate" class="form-control" />
         </div>
         <div class="col-auto">
-          <button class="btn btn-primary modern-btn" (click)="applyDateFilter()">
+          <button class="btn btn-primary" (click)="applyDateFilter()">
             <i class="bi bi-funnel me-1"></i> Filter
           </button>
         </div>
         <div class="col-auto">
-          <button class="btn btn-outline-secondary modern-btn" (click)="resetFilter()">
+          <button class="btn btn-outline-secondary" (click)="resetFilter()">
             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
           </button>
         </div>
@@ -116,16 +123,16 @@
   <div *ngIf="showSkeleton" class="skeleton-container">
     <div class="skeleton-table">
       <div class="skeleton-header">
-        <div class="skeleton-cell" *ngFor="let i of [1,2,3,4,5,6,7,8,9]"></div>
+        <div class="skeleton-cell" *ngFor="let i of [1,2,3,4,5,6]"></div>
       </div>
       <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
-        <div class="skeleton-cell" *ngFor="let j of [1,2,3,4,5,6,7,8,9]"></div>
+        <div class="skeleton-cell" *ngFor="let j of [1,2,3,4,5,6]"></div>
       </div>
     </div>
   </div>
 
   <!-- Reports Table -->
-  <div *ngIf="!showSkeleton" class="table-container" data-aos="fade-up">
+  <div *ngIf="!showSkeleton" class="table-container">
     <div class="table-header">
       <h3 class="table-title">
         <i class="bi bi-table me-2"></i>
@@ -134,18 +141,21 @@
       <div class="table-info">
         Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
         {{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} reports
+        <span *ngIf="detailedReportsLoading" class="text-muted ms-2">
+          <i class="bi bi-arrow-repeat spin"></i> Excel data loading...
+        </span>
       </div>
     </div>
 
-    <div class="modern-table-wrapper">
-      <table class="table modern-table">
-        <thead>
+    <div class="table-wrapper">
+      <table class="table table-hover">
+        <thead class="table-primary">
           <tr>
             <th><i class="bi bi-building me-1"></i> Site Name</th>
             <th><i class="bi bi-geo-alt me-1"></i> Province</th>
             <th><i class="bi bi-briefcase me-1"></i> Company</th>
             <th><i class="bi bi-person me-1"></i> Agent</th>
-            <th><i class="bi bi-calendar me-1"></i> Date</th>
+            <th><i class="bi bi-calendar-check me-1"></i> PM Actual Date</th>
             <th><i class="bi bi-flag me-1"></i> Status</th>
             <th><i class="bi bi-gear me-1"></i> Action</th>
           </tr>
@@ -153,32 +163,30 @@
         <tbody>
           <tr *ngFor="let report of pagedReports; let i = index" 
               class="table-row clickable-row" 
-              [style.animation-delay]="(i * 0.05) + 's'"
               (click)="voirRapport(report)">
             <td class="site-name">
               <div class="site-info">
-                <strong>{{ report['site']?.name || 'N/A' }}</strong>
-                <small class="site-id">ID: {{ report['site']?.siteId || 'N/A' }}</small>
+                <strong>{{ (report.report?.site?.name || report.site?.name) || 'N/A' }}</strong>
+                <small class="site-id text-muted">ID: {{ (report.report?.site?.siteId || report.site?.siteId) || 'N/A' }}</small>
               </div>
             </td>
-            <td>{{ report['site']?.province || 'N/A' }}</td>
+            <td>{{ (report.report?.site?.province || report.site?.province) || 'N/A' }}</td>
+            <td>{{ getVendorName(report) }}</td>
+            <td>{{ (report.report?.fme?.fullName || report.report?.fmeName || report.fme?.fullName || report.fmeName) || 'N/A' }}</td>
             <td>
-              <span class="vendor-badge">{{ getVendorName(report) }}</span>
-            </td>
-            <td>{{ report['fme']?.fullName || report['fmeName'] || 'N/A' }}</td>
-            <td>
-              <span class="date-badge">
-                {{ report['pmActualDate'] ? (report['pmActualDate'] | date:'dd/MM/yyyy') : 'N/A' }}
+              <span class="date-badge" *ngIf="report.report?.pmActualDate || report.pmActualDate">
+                {{ (report.report?.pmActualDate || report.pmActualDate) | date:'dd/MM/yyyy' }}
               </span>
+              <span *ngIf="!(report.report?.pmActualDate || report.pmActualDate)" class="text-muted">N/A</span>
             </td>
             <td>
-              <span [ngClass]="getStatusBadgeClass(report['status'])">
-                {{ report['status'] || 'N/A' }}
+              <span [ngClass]="getStatusBadgeClass(report.report?.status || report.status)">
+                {{ (report.report?.status || report.status) || 'N/A' }}
               </span>
             </td>
             <td (click)="$event.stopPropagation()">
               <button
-                class="btn btn-action"
+                class="btn btn-primary btn-sm"
                 (click)="voirRapport(report)"
                 title="View report"
               >
@@ -202,13 +210,13 @@
     </div>
   </div>
 
-  <!-- Modern Pagination -->
-  <div class="pagination-container" *ngIf="totalPages > 1 && !showSkeleton" data-aos="fade-up">
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 1 && !showSkeleton">
     <nav aria-label="Report pagination">
-      <ul class="modern-pagination">
+      <ul class="pagination justify-content-center">
         <!-- Previous Button -->
         <li class="page-item" [class.disabled]="currentPage === 1">
-          <button class="page-link prev-next" (click)="changePage(currentPage - 1)">
+          <button class="page-link" (click)="changePage(currentPage - 1)">
             <i class="bi bi-chevron-left"></i>
             <span class="d-none d-sm-inline">Previous</span>
           </button>
@@ -218,18 +226,18 @@
         <li class="page-item" 
             *ngFor="let page of getVisiblePages()" 
             [class.active]="currentPage === page"
-            [class.dots]="page === -1">
+            [class.disabled]="page === -1">
           <button class="page-link" 
                   *ngIf="page !== -1" 
                   (click)="changePage(page)">
             {{ page }}
           </button>
-          <span class="page-dots" *ngIf="page === -1">...</span>
+          <span class="page-link" *ngIf="page === -1">...</span>
         </li>
         
         <!-- Next Button -->
         <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <button class="page-link prev-next" (click)="changePage(currentPage + 1)">
+          <button class="page-link" (click)="changePage(currentPage + 1)">
             <span class="d-none d-sm-inline">Next</span>
             <i class="bi bi-chevron-right"></i>
           </button>
@@ -238,10 +246,10 @@
     </nav>
     
     <!-- Pagination Info -->
-    <div class="pagination-info">
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <span class="separator">•</span>
-      <span>{{ totalItems }} total reports</span>
+    <div class="pagination-info text-center mt-2">
+      <small class="text-muted">
+        Page {{ currentPage }} of {{ totalPages }} • {{ totalItems }} total reports
+      </small>
     </div>
   </div>
 
