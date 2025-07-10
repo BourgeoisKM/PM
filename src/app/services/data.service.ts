@@ -120,6 +120,40 @@ export class DataService {
     });
   }
 
+  /** ---------- AJOUTS OPTIMISÉS DASHBOARD ET EXPORT ---------- */
+
+  /**
+   * Récupère les rapports paginés (dashboard rapide)
+   * Params : page, limit, status, searchTerm, startDate, endDate...
+   */
+  getReportsPage(page: number = 1, limit: number = 50, filters: any = {}): Observable<any> {
+    let params: any = { page: page.toString(), limit: limit.toString() }
+    Object.keys(filters).forEach(key => {
+      if (filters[key]) params[key] = filters[key]
+    })
+    return this.httpClient.get<any>(`${this.baseUrl}/reports`, {
+      headers: this.getAuthHeaders(),
+      params
+    })
+  }
+
+  /**
+   * Récupère tous les rapports détaillés pour l'export Excel (filtré mais non paginé)
+   * Params : status, searchTerm, startDate, endDate...
+   */
+  getAllReportsDetails(filters: any = {}): Observable<any[]> {
+    let params: any = {}
+    Object.keys(filters).forEach(key => {
+      if (filters[key]) params[key] = filters[key]
+    })
+    return this.httpClient.get<any[]>(`${this.baseUrl}/reports/all-details`, {
+      headers: this.getAuthHeaders(),
+      params
+    })
+  }
+
+  /** --------------------------------------------------------- */
+
   getReports(): Observable<any[]> {
     return this.httpClient.get<any[]>(`${this.baseUrl}/reports`, {
       headers: this.getAuthHeaders()
@@ -139,7 +173,7 @@ export class DataService {
   }
 
   updateReportStatus(reportId: string, status: string) {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

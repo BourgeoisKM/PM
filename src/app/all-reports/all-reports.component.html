@@ -46,7 +46,6 @@
 
   <!-- Controls Section -->
   <div *ngIf="!initialLoading" class="controls-section mb-4" data-aos="fade-up">
-    
     <!-- Search and Export Row -->
     <div class="row mb-4">
       <div class="col-lg-6">
@@ -65,9 +64,9 @@
         </div>
       </div>
       <div class="col-lg-6 text-end">
-        <button (click)="exportExcel()" class="btn btn-export">
+        <button (click)="exportExcel()" [disabled]="excelLoading" class="btn btn-export">
           <i class="bi bi-file-earmark-excel me-2"></i>
-          Export Excel
+          {{ excelLoading ? 'Préparation...' : 'Export Excel' }}
         </button>
       </div>
     </div>
@@ -146,6 +145,7 @@
             <th><i class="bi bi-geo-alt me-1"></i> Province</th>
             <th><i class="bi bi-briefcase me-1"></i> Company</th>
             <th><i class="bi bi-person me-1"></i> Agent</th>
+            <th><i class="bi bi-calendar me-1"></i> Date</th>
             <th><i class="bi bi-flag me-1"></i> Status</th>
             <th><i class="bi bi-gear me-1"></i> Action</th>
           </tr>
@@ -157,18 +157,23 @@
               (click)="voirRapport(report)">
             <td class="site-name">
               <div class="site-info">
-                <strong>{{ report.report?.site?.name || 'N/A' }}</strong>
-                <small class="site-id">ID: {{ report.report?.site?.siteId || 'N/A' }}</small>
+                <strong>{{ report['site']?.name || 'N/A' }}</strong>
+                <small class="site-id">ID: {{ report['site']?.siteId || 'N/A' }}</small>
               </div>
             </td>
-            <td>{{ report.report?.site?.province || 'N/A' }}</td>
+            <td>{{ report['site']?.province || 'N/A' }}</td>
             <td>
               <span class="vendor-badge">{{ getVendorName(report) }}</span>
             </td>
-            <td>{{ report.report?.fme?.fullName || report.report?.fmeName || 'N/A' }}</td>
+            <td>{{ report['fme']?.fullName || report['fmeName'] || 'N/A' }}</td>
             <td>
-              <span [ngClass]="getStatusBadgeClass(report.report?.status)">
-                {{ report.report?.status || 'N/A' }}
+              <span class="date-badge">
+                {{ report['pmActualDate'] ? (report['pmActualDate'] | date:'dd/MM/yyyy') : 'N/A' }}
+              </span>
+            </td>
+            <td>
+              <span [ngClass]="getStatusBadgeClass(report['status'])">
+                {{ report['status'] || 'N/A' }}
               </span>
             </td>
             <td (click)="$event.stopPropagation()">
@@ -184,7 +189,7 @@
           
           <!-- Empty State -->
           <tr *ngIf="pagedReports.length === 0" class="empty-row">
-            <td colspan="6" class="text-center py-5">
+            <td colspan="7" class="text-center py-5">
               <div class="empty-state">
                 <i class="bi bi-inbox display-1 text-muted mb-3"></i>
                 <h5 class="text-muted">No reports found</h5>

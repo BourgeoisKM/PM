@@ -1,6 +1,6 @@
-import { Component, type OnInit } from "@angular/core"
-import  { Router } from "@angular/router"
-import  { DataService } from "src/app/services/data.service"
+import { Component, OnInit } from "@angular/core"
+import { Router } from "@angular/router"
+import { DataService } from "src/app/services/data.service"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
 import * as XLSX from "xlsx"
@@ -8,9 +8,9 @@ import * as XLSX from "xlsx"
 const VENDOR_MAP: Record<string, string> = {
   "fe85da04-2d40-40eb-86f5-682fde6f9573": "Novacom",
   "c257ad68-2390-425a-9946-f800c48fe8c4": "Geek",
-  "8014a694-842d-48fd-9c4d-dc32cf15fb93": "Global Tech",
+  "8014a694-842d-48fd-9c4d-dc32cf15fb93": "Global-Tech",
   "fe2f623f-1900-431f-8684-7659e180a207": "Netis",
-  "3aed5813-e6a8-4670-b1f0-775aa4fbe9be": "East Castle",
+  "3aed5813-e6a8-4670-b1f0-775aa4fbe9be": "EastCastle",
   // Ajoute ici les autres VendorId connus :
   // 'xxxx-xxxx': 'ATC',
   // 'yyyy-yyyy': 'IHS',
@@ -57,121 +57,82 @@ interface Report {
   styleUrls: ["./all-reports.component.css"],
 })
 export class AllReportsComponent implements OnInit {
-  reports: Report[] = []
-  allReportsBackup: Report[] = []
   pagedReports: Report[] = []
-  currentPage = 1
-  itemsPerPage = 50 // Réduit à 50 comme demandé
-  totalPages = 0
-  totalItems = 0
-  loading = true
-  initialLoading = true
-  error: string | null = null
-  filterStartDate: string | null = null
-  filterEndDate: string | null = null
-  searchTerm = ""
+  reportPagesCache: { [page: number]: Report[] } = {}
+  excelData: Report[] = []
+  excelLoading = false
   showSkeleton = true
-  Math = Math // Pour utiliser Math dans le template
+  error: string | null = null
 
   currentUser: { role?: string; vendorId?: string; [key: string]: any } | null = null
+  currentPage = 1
+  itemsPerPage = 50
+  totalPages = 1
+  totalItems = 0
+  searchTerm = ""
+  statusFilter = ""
+  filterStartDate: string | null = null
+  filterEndDate: string | null = null
+  currentFilters: any = {}
+  initialLoading = true
 
-  // Cache management
-  private cacheKey = "reports_cache"
-  private cacheTimestamp = "reports_cache_timestamp"
-  private cacheExpiry = 5 * 60 * 1000 // 5 minutes en millisecondes
-  statusFilter = "" // Nouveau filtre par status
+  Math = Math
 
-  constructor(
-    private data: DataService,
-    private router: Router,
-  ) {}
+  constructor(private data: DataService, private router: Router) {}
 
   ngOnInit(): void {
     this.data.getCurrentUser().subscribe((user) => {
       this.currentUser = user
       if (!this.currentUser) {
-        console.error("Utilisateur non connecté !")
         this.router.navigate(["/login"])
         return
       }
-      this.loadReportsProgressively()
+      this.loadReports(1)
     })
   }
 
-  /** Chargement progressif des rapports avec cache */
-  loadReportsProgressively(): void {
-    // Vérifier le cache d'abord
-    const cachedData = this.getCachedReports()
-    if (cachedData) {
-      console.log("📦 Chargement depuis le cache")
-      this.loadFromCache(cachedData)
+  /** Chargement paginé avec cache mémoire */
+  loadReports(page: number, filters: any = this.currentFilters): void {
+    if (JSON.stringify(filters) !== JSON.stringify(this.currentFilters)) {
+      this.reportPagesCache = {}
+      this.currentFilters = { ...filters }
+      this.excelData = []
+    }
+    if (this.reportPagesCache[page]) {
+      this.pagedReports = this.reportPagesCache[page]
+      this.currentPage = page
+      this.showSkeleton = false
       return
     }
-
-    console.log("🌐 Chargement depuis le serveur")
-    this.loading = true
-    this.initialLoading = true
     this.showSkeleton = true
-    this.error = null
-
-    this.data.getReports().subscribe(
-      (res: Report[]) => {
-        if (res && Array.isArray(res) && res.length > 0) {
-          let filteredReports = res
-          if (this.currentUser?.role === "vendor_admin") {
-            filteredReports = res.filter((r) => r?.report?.fme?.vendorId === this.currentUser?.vendorId)
-          }
-
-          // Sauvegarder dans le cache
-          this.setCachedReports(filteredReports)
-
-          this.allReportsBackup = filteredReports
-          this.reports = [...this.allReportsBackup]
-          this.totalItems = this.reports.length
-          this.currentPage = 1
-          this.calculateTotalPages()
-          this.setPagedReports()
-
-          setTimeout(() => {
-            this.showSkeleton = false
-            this.loading = false
-            this.initialLoading = false
-          }, 800)
-        } else {
-          this.handleEmptyResponse()
-        }
-      },
-      (err: any) => {
-        console.error("Erreur lors du chargement des rapports :", err)
-        this.error = "Erreur de chargement des rapports."
+    this.data.getReportsPage(page, this.itemsPerPage, filters).subscribe({
+      next: (res: any) => {
+        this.pagedReports = res.data
+        this.reportPagesCache[page] = res.data
+        this.currentPage = page
+        this.totalPages = res.totalPages
+        this.totalItems = res.totalItems
         this.showSkeleton = false
-        this.loading = false
-        this.initialLoading = false
+
+        console.log('RESPONSE PAGED:', res.data);
       },
-    )
+      error: (err) => {
+        this.error = "Erreur lors du chargement des rapports."
+        this.showSkeleton = false
+      }
+    })
   }
 
-  /** Mapping vendorId -> nom du vendor, fallback sur portfolio */
-  getVendorName(report: Report): string {
-    const site = report?.report?.site
-    if (site?.vendorId && VENDOR_MAP[site.vendorId]) {
-      return VENDOR_MAP[site.vendorId]
-    }
-    return site?.portfolio || "N/A"
+  /** Pagination */
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === -1) return
+    this.loadReports(page)
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  calculateTotalPages(): void {
-    this.totalPages = Math.ceil(this.reports.length / this.itemsPerPage)
-  }
-
-  setPagedReports(): void {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage
-    this.pagedReports = this.reports.slice(startIndex, startIndex + this.itemsPerPage)
-  }
-
-  /** Pagination intelligente - affiche seulement les pages pertinentes */
+  /** Pagination intelligente pour le template */
   getVisiblePages(): number[] {
-    const delta = 2 // Nombre de pages à afficher de chaque côté
+    const delta = 2
     const range = []
     const rangeWithDots = []
 
@@ -184,7 +145,7 @@ export class AllReportsComponent implements OnInit {
     }
 
     if (this.currentPage - delta > 2) {
-      rangeWithDots.push(1, -1) // -1 représente "..."
+      rangeWithDots.push(1, -1)
     } else {
       rangeWithDots.push(1)
     }
@@ -192,7 +153,7 @@ export class AllReportsComponent implements OnInit {
     rangeWithDots.push(...range)
 
     if (this.currentPage + delta < this.totalPages - 1) {
-      rangeWithDots.push(-1, this.totalPages) // -1 représente "..."
+      rangeWithDots.push(-1, this.totalPages)
     } else if (this.totalPages > 1) {
       rangeWithDots.push(this.totalPages)
     }
@@ -200,74 +161,50 @@ export class AllReportsComponent implements OnInit {
     return rangeWithDots
   }
 
-  applyDateFilter(): void {
-    if (!this.filterStartDate && !this.filterEndDate) {
-      this.reports = [...this.allReportsBackup]
-      this.currentPage = 1
-      this.calculateTotalPages()
-      this.setPagedReports()
-      return
+  /** Recherche et filtres (tout côté serveur) */
+  applySearch(): void {
+    this.currentFilters = {
+      ...this.currentFilters,
+      searchTerm: this.searchTerm,
+      status: this.statusFilter,
+      startDate: this.filterStartDate,
+      endDate: this.filterEndDate,
     }
+    this.reportPagesCache = {}
+    this.excelData = []
+    this.loadReports(1, this.currentFilters)
+  }
 
-    const start = this.filterStartDate ? new Date(this.filterStartDate) : null
-    const end = this.filterEndDate ? new Date(this.filterEndDate) : null
-
-    this.reports = this.allReportsBackup.filter((r) => {
-      if (!r.report?.pmPlannedDate) return false
-      const reportDate = new Date(r.report.pmPlannedDate)
-      if (start && end) return reportDate >= start && reportDate <= end
-      if (start) return reportDate >= start
-      if (end) return reportDate <= end
-      return true
-    })
-
-    this.currentPage = 1
-    this.calculateTotalPages()
-    this.setPagedReports()
+  applyDateFilter(): void {
+    this.applySearch()
   }
 
   resetFilter(): void {
-    this.filterStartDate = null
-    this.filterEndDate = null
     this.searchTerm = ""
     this.statusFilter = ""
-    this.reports = [...this.allReportsBackup]
-    this.currentPage = 1
-    this.calculateTotalPages()
-    this.setPagedReports()
+    this.filterStartDate = null
+    this.filterEndDate = null
+    this.currentFilters = {}
+    this.reportPagesCache = {}
+    this.excelData = []
+    this.loadReports(1)
   }
 
-  changePage(page: number): void {
-    if (page < 1 || page > this.totalPages || page === -1) return // -1 = dots
-    this.currentPage = page
-    this.setPagedReports()
-
-    // Scroll vers le haut pour une meilleure UX
-    window.scrollTo({ top: 0, behavior: "smooth" })
+  applyStatusFilter(): void {
+    this.applySearch()
   }
 
-  applySearch(): void {
-    const term = this.searchTerm.trim().toLowerCase()
-
-    this.reports = this.allReportsBackup.filter((report) => {
-      const siteName = report.report?.site?.name?.toLowerCase() || ""
-      const vendorName = this.getVendorName(report).toLowerCase()
-      const fmeName = (report.report?.fme?.fullName || report.report?.fmeName || "").toLowerCase()
-      const status = (report.report?.status || "").toLowerCase()
-
-      // Filtrage par terme de recherche
-      const matchesSearch = siteName.includes(term) || vendorName.includes(term) || fmeName.includes(term)
-
-      // Filtrage par status
-      const matchesStatus = !this.statusFilter || status === this.statusFilter.toLowerCase()
-
-      return matchesSearch && matchesStatus
-    })
-
-    this.currentPage = 1
-    this.calculateTotalPages()
-    this.setPagedReports()
+  /** Mapping vendorId -> nom du vendor, fallback sur portfolio */
+ getVendorName(report: any): string {
+  const site = report['site'];
+  if (site?.vendorId && VENDOR_MAP[site.vendorId]) {
+    return VENDOR_MAP[site.vendorId];
   }
+  // Pour debug, tu peux voir la valeur en console si besoin :
+  // console.log("Vendor ID inconnu ou non mappé :", site?.vendorId);
+  return site?.portfolio || "N/A";
+}
+
 
   getStatusBadgeClass(status: string | undefined): string {
     switch ((status || "").toLowerCase()) {
@@ -285,43 +222,34 @@ export class AllReportsComponent implements OnInit {
     }
   }
 
-  exportPDF(): void {
-    const DATA = document.getElementById("rapportTable")
-    if (DATA) {
-      html2canvas(DATA).then((canvas) => {
-        const fileWidth = 210
-        const fileHeight = (canvas.height * fileWidth) / canvas.width
-        const FILEURI = canvas.toDataURL("image/png")
-        const PDF = new jsPDF()
-        PDF.addImage(FILEURI, "PNG", 0, 10, fileWidth, fileHeight)
-        PDF.save("rapports.pdf")
-      })
-    }
-  }
-
-  private flattenObject(obj: any, prefix = ""): any {
-    const result: any = {}
-    for (const key in obj) {
-      if (!obj.hasOwnProperty(key)) continue
-      const value = obj[key]
-      const newKey = prefix ? `${prefix}.${key}` : key
-      if (value && typeof value === "object" && !Array.isArray(value)) {
-        Object.assign(result, this.flattenObject(value, newKey))
-      } else {
-        result[newKey] = value
-      }
-    }
-    return result
-  }
-
+  /** --- EXPORT EXCEL --- */
   exportExcel(): void {
-    if (!this.reports.length) {
-      console.warn("Aucun rapport à exporter.")
-      return
+    if (this.excelData.length === 0) {
+      this.excelLoading = true
+      this.data.getAllReportsDetails(this.currentFilters).subscribe({
+        next: (allDetails: Report[]) => {
+          this.excelData = allDetails
+          this.excelLoading = false
+          this.doExport(this.excelData)
+        },
+        error: () => {
+          this.excelLoading = false
+          this.error = "Erreur lors de la préparation Excel"
+        }
+      })
+    } else {
+      this.doExport(this.excelData)
     }
+  }
 
+  /** Toute ta logique de mapping/colonnes Excel */
+  doExport(reports: Report[]): void {
+    // === TOUT TON CODE METIER D'EXPORT ICI ===
+    // (colle toute la partie de mapping dynamique que tu avais, rien à changer)
+    // ⬇️
+    // -----
     // --- ORDRE & MAPPING ---
-    // 1. Mappings + Section métier
+   
     const SECTION_ORDER = [
       "Sécurité du site",
       "Générateur",
@@ -452,14 +380,12 @@ export class AllReportsComponent implements OnInit {
       },
     }
 
-    // --- 1. Collecte dynamique des colonnes ---
+    // 1. Collecte dynamique des colonnes
     const allSectionLabels: Record<string, Set<string>> = {}
     const allItemIdsByCol: Record<string, Set<string>> = {}
 
-    this.reports.forEach((report) => {
-      // Gérer tous les cas possibles pour sections
+    reports.forEach((report) => {
       const sectionsArr: any[] = (report as any).sections || (report.report && (report.report as any).sections) || []
-
       sectionsArr.forEach((section: any) => {
         const sectionRaw = section.title || section.sectionType || "Section inconnue"
         const sectionNorm = SECTION_MAP[sectionRaw] || sectionRaw
@@ -470,7 +396,6 @@ export class AllReportsComponent implements OnInit {
             const labelNorm = (ITEM_MAP[sectionNorm] && ITEM_MAP[sectionNorm][labelRaw]) || labelRaw
             const colKey = `${sectionNorm} - ${labelNorm}`
             allSectionLabels[sectionNorm].add(labelNorm)
-
             if (!allItemIdsByCol[colKey]) allItemIdsByCol[colKey] = new Set()
             allItemIdsByCol[colKey].add(item.id)
           }
@@ -483,7 +408,6 @@ export class AllReportsComponent implements OnInit {
       ...SECTION_ORDER.filter((sec) => allSectionLabels[sec]),
       ...Object.keys(allSectionLabels).filter((sec) => !SECTION_ORDER.includes(sec)),
     ]
-
     const dynamicColumns: string[] = []
     allSectionsOrdered.forEach((section) => {
       Array.from(allSectionLabels[section])
@@ -493,35 +417,20 @@ export class AllReportsComponent implements OnInit {
         })
       dynamicColumns.push(`${section} - Autres`)
     })
-
     const infoColumns = [
-      "Rapport ID",
-      "Site",
-      "Site ID",
-      "Vendor",
-      "Province",
-      "Region",
-      "Site Type",
-      "Power Configuration",
-      "Tenants",
-      "FME",
-      "PM Planned Date",
-      "PM Actual Date",
-      "Status",
-      "Type PM",
+      "Rapport ID", "Site", "Site ID", "Vendor", "Province", "Region", "Site Type",
+      "Power Configuration", "Tenants", "FME", "PM Planned Date", "PM Actual Date", "Status", "Type PM",
     ]
     const columns = [...infoColumns, ...dynamicColumns]
 
-    // --- 2. Génération des lignes ---
+    // 2. Génération des lignes
     const dataToExport: any[] = []
 
-    this.reports.forEach((report) => {
+    reports.forEach((report) => {
       const base = report.report || {}
       const site = base.site || {}
       const fme = base.fme || {}
       const vendorName = this.getVendorName(report)
-
-      // Valeurs : toujours checker les deux niveaux
       const valuesArr: any[] = (report as any).values || (report.report && (report.report as any).values) || []
       const sectionsArr: any[] = (report as any).sections || (report.report && (report.report as any).sections) || []
 
@@ -569,7 +478,7 @@ export class AllReportsComponent implements OnInit {
 
       // Remplit chaque colonne dynamique par correspondance itemId
       dynamicColumns.forEach((col) => {
-        if (col.endsWith(" - Autres")) return // On fait ça après
+        if (col.endsWith(" - Autres")) return
         const possibleItemIds = allItemIdsByCol[col]
         if (!possibleItemIds) return
         let value = ""
@@ -603,11 +512,13 @@ export class AllReportsComponent implements OnInit {
       dataToExport.push(row)
     })
 
-    // --- 3. Export XLSX ---
+    // 3. Export XLSX
     const worksheet = XLSX.utils.json_to_sheet(dataToExport, { header: columns })
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, "Rapports")
     XLSX.writeFile(workbook, "rapports_groupes.xlsx")
+    // -----
+    // ⬆️ TOUT TON MAPPING/EXPORT EST CONSERVÉ
   }
 
   voirRapport(report: Report): void {
@@ -617,78 +528,5 @@ export class AllReportsComponent implements OnInit {
     } else {
       console.warn("L'ID du rapport est introuvable.")
     }
-  }
-
-  /** Récupérer les rapports depuis le cache */
-  private getCachedReports(): Report[] | null {
-    try {
-      const timestamp = localStorage.getItem(this.cacheTimestamp)
-      const cachedData = localStorage.getItem(this.cacheKey)
-
-      if (!timestamp || !cachedData) {
-        return null
-      }
-
-      const cacheAge = Date.now() - Number.parseInt(timestamp)
-      if (cacheAge > this.cacheExpiry) {
-        // Cache expiré
-        localStorage.removeItem(this.cacheKey)
-        localStorage.removeItem(this.cacheTimestamp)
-        return null
-      }
-
-      return JSON.parse(cachedData)
-    } catch (error) {
-      console.error("Erreur lors de la lecture du cache:", error)
-      return null
-    }
-  }
-
-  /** Sauvegarder les rapports dans le cache */
-  private setCachedReports(reports: Report[]): void {
-    try {
-      localStorage.setItem(this.cacheKey, JSON.stringify(reports))
-      localStorage.setItem(this.cacheTimestamp, Date.now().toString())
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde du cache:", error)
-    }
-  }
-
-  /** Charger depuis le cache */
-  private loadFromCache(cachedReports: Report[]): void {
-    this.allReportsBackup = cachedReports
-    this.reports = [...this.allReportsBackup]
-    this.totalItems = this.reports.length
-    this.currentPage = 1
-    this.calculateTotalPages()
-    this.setPagedReports()
-
-    // Chargement instantané depuis le cache
-    this.showSkeleton = false
-    this.loading = false
-    this.initialLoading = false
-  }
-
-  /** Gérer la réponse vide */
-  private handleEmptyResponse(): void {
-    this.error = "Aucun rapport valide trouvé."
-    this.reports = []
-    this.pagedReports = []
-    this.totalPages = 0
-    this.totalItems = 0
-    this.showSkeleton = false
-    this.loading = false
-    this.initialLoading = false
-  }
-
-  /** Forcer le rechargement depuis le serveur */
-  refreshFromServer(): void {
-    localStorage.removeItem(this.cacheKey)
-    localStorage.removeItem(this.cacheTimestamp)
-    this.loadReportsProgressively()
-  }
-
-  applyStatusFilter(): void {
-    this.applySearch() // Réutilise la logique de recherche
   }
 }
