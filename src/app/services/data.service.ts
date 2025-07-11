@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core"
 import {  HttpClient, HttpHeaders } from "@angular/common/http"
 import { type Observable, of } from "rxjs"
-import { map } from "rxjs/operators"
+import { map, catchError } from "rxjs/operators"
 
 @Injectable({
   providedIn: "root",
@@ -45,9 +45,20 @@ export class DataService {
   }
 
   getUserProfile(): Observable<any> {
-    return this.httpClient.get(`${this.baseUrl}/auth/me`, {
-      headers: this.getAuthHeaders(),
-    })
+    return this.httpClient
+      .get(`${this.baseUrl}/auth/me`, {
+        headers: this.getAuthHeaders(),
+      })
+      .pipe(
+        catchError((error) => {
+          console.error("Erreur récupération profil:", error)
+          // Si erreur 401, la session a expiré
+          if (error.status === 401) {
+            this.logout()
+          }
+          throw error
+        }),
+      )
   }
 
   logout(): void {
@@ -128,9 +139,16 @@ export class DataService {
 
     console.log("🌐 Chargement de TOUS les rapports pour affichage depuis:", url)
 
-    return this.httpClient.get<any[]>(url, {
-      headers: this.getAuthHeaders(),
-    })
+    return this.httpClient
+      .get<any[]>(url, {
+        headers: this.getAuthHeaders(),
+      })
+      .pipe(
+        catchError((error) => {
+          console.error("Erreur chargement rapports:", error)
+          return of([]) // Retourner un tableau vide en cas d'erreur
+        }),
+      )
   }
 
   // DONNÉES DÉTAILLÉES pour Excel - même route avec includeDetails=true
@@ -193,5 +211,12 @@ export class DataService {
       : new HttpHeaders()
 
     return this.httpClient.get<any>(`${this.baseUrl}/sites/stats`, { headers })
+  }
+
+  // Nouvelle méthode pour les stats du dashboard
+  getDashboardStats(): Observable<any> {
+    return this.httpClient.get<any>(`${this.baseUrl}/dashboard/stats`, {
+      headers: this.getAuthHeaders(),
+    })
   }
 }
